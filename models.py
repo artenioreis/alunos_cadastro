@@ -1,13 +1,21 @@
 from datetime import datetime, date
-from app import db
+from flask_sqlalchemy import SQLAlchemy
+
+db = SQLAlchemy()
 
 def calcular_idade(data_nascimento):
-    """Calcula idade a partir da data de nascimento"""
+    if not data_nascimento:
+        return 0
     hoje = date.today()
     idade = hoje.year - data_nascimento.year
     if (hoje.month, hoje.day) < (data_nascimento.month, data_nascimento.day):
         idade -= 1
     return idade
+
+class Usuario(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    username = db.Column(db.String(50), unique=True, nullable=False)
+    password = db.Column(db.String(200), nullable=False) # Armazenará o hash da senha
 
 class Aluno(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -17,7 +25,7 @@ class Aluno(db.Model):
     idade = db.Column(db.Integer, nullable=False)
     nome_pais = db.Column(db.String(100), nullable=False)
     curso = db.Column(db.String(100), nullable=False)
-    setor = db.Column(db.String(20), nullable=False)  # CULTURAL ou PROFISSIONALIZANTE
+    setor = db.Column(db.String(20), nullable=False)
     endereco = db.Column(db.String(200), nullable=False)
     escola = db.Column(db.String(100), nullable=False)
     trabalho_ficha_adulto = db.Column(db.Boolean, default=False)
@@ -29,27 +37,6 @@ class Aluno(db.Model):
     observacao = db.Column(db.Text, nullable=True)
     data_cadastro = db.Column(db.DateTime, default=datetime.utcnow)
 
-    def __init__(self, **kwargs):
-        super().__init__(**kwargs)
-        # Calcular idade automaticamente
-        if self.data_nascimento:
-            self.idade = calcular_idade(self.data_nascimento)
-
     def atualizar_idade(self):
-        """Atualiza a idade do aluno"""
         if self.data_nascimento:
             self.idade = calcular_idade(self.data_nascimento)
-
-    def to_dict(self):
-        return {
-            'id': self.id,
-            'nome_completo': self.nome_completo,
-            'idade': self.idade,
-            'curso': self.curso,
-            'setor': self.setor,
-            'escola': self.escola,
-            'foto_url': f'/static/uploads/{self.foto}' if self.foto else None,
-            'bolsa_familia': self.bolsa_familia,
-            'renda_familiar': self.renda_familiar,
-            'pessoas_residencia': self.pessoas_residencia
-        }

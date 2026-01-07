@@ -1,28 +1,27 @@
-/* Estilos personalizados para o sistema de alunos */
+/* Estilos Sociedade da Redenção */
 
 :root {
-    --primary-color: #667eea;
-    --secondary-color: #764ba2;
+    --primary-color: #a689bd;    /* Roxo do logo */
+    --secondary-color: #2d2d2d;  /* Cinza escuro do logo */
     --success-color: #28a745;
     --info-color: #17a2b8;
     --warning-color: #ffc107;
     --danger-color: #dc3545;
     --light-color: #f8f9fa;
-    --dark-color: #343a40;
+    --dark-color: #2d2d2d;
 }
 
 body {
     background-color: #f8f9fa;
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     padding-top: 20px;
-    min-height: 100vh;
 }
 
-/* Header e Logo */
+/* Header estilizado com gradiente do logo */
 .header {
-    background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+    background: linear-gradient(135deg, var(--primary-color) 0%, #7b5ea3 100%);
     color: white;
-    padding: 2rem 0;
+    padding: 2.5rem 0;
     margin-bottom: 2rem;
     border-radius: 15px;
     box-shadow: 0 4px 20px rgba(0,0,0,0.1);
@@ -30,260 +29,74 @@ body {
 
 .logo-container {
     text-align: center;
-    margin-bottom: 1rem;
 }
 
-.logo {
-    max-height: 80px;
-    margin-bottom: 1rem;
-}
-
-/* Cards */
+/* Cards e Listas */
 .card {
     border: none;
-    box-shadow: 0 0 20px rgba(0,0,0,0.08);
-    margin-bottom: 25px;
+    box-shadow: 0 0 25px rgba(0,0,0,0.06);
     border-radius: 15px;
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
-}
-
-.card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+    margin-bottom: 25px;
 }
 
 .card-header {
     background-color: var(--primary-color);
     color: white;
     border-radius: 15px 15px 0 0 !important;
-    padding: 1.2rem 1.5rem;
+    padding: 1.2rem;
     font-weight: 600;
 }
 
-/* Botões - Design consistente e alinhado */
-.btn {
-    border-radius: 8px;
-    padding: 0.5rem 1.5rem;
-    font-weight: 500;
-    transition: all 0.3s ease;
-    border: none;
-}
-
+/* Botões baseados na cor da logo */
 .btn-primary {
-    background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+    background: linear-gradient(135deg, var(--primary-color) 0%, #8e73a5 100%);
     border: none;
+    transition: 0.3s;
 }
 
 .btn-primary:hover {
-    background: linear-gradient(135deg, #5a67d8 0%, #6b46c1 100%);
+    background: linear-gradient(135deg, #8e73a5 0%, #7b5ea3 100%);
     transform: translateY(-2px);
-    box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+    box-shadow: 0 4px 12px rgba(166, 137, 189, 0.3);
 }
 
-.btn-success {
-    background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
-    border: none;
-}
-
-.btn-warning {
-    background: linear-gradient(135deg, #ffc107 0%, #fd7e14 100%);
-    border: none;
-}
-
-.btn-danger {
-    background: linear-gradient(135deg, #dc3545 0%, #e83e8c 100%);
-    border: none;
-}
-
-.btn-group {
-    display: flex;
-    gap: 5px;
-}
-
-.btn-group .btn {
-    padding: 0.375rem 0.75rem;
-}
-
-/* Foto do aluno */
+/* Fotos circulares dos alunos */
 .aluno-foto {
-    width: 100px;
-    height: 100px;
+    width: 65px;
+    height: 65px;
     object-fit: cover;
     border-radius: 50%;
     border: 3px solid var(--primary-color);
-    background-color: #f8f9fa;
-}
-
-.foto-preview {
-    width: 200px;
-    height: 200px;
-    object-fit: cover;
-    border-radius: 10px;
-    border: 3px dashed #dee2e6;
-    background-color: #f8f9fa;
+    background-color: #fff;
 }
 
 /* Cards de estatísticas */
 .stat-card {
     text-align: center;
-    padding: 25px 15px;
-    border-radius: 12px;
+    padding: 20px;
+    border-radius: 15px;
     color: white;
     margin-bottom: 20px;
-    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-    transition: transform 0.3s ease;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.08);
 }
 
-.stat-card:hover {
-    transform: translateY(-5px);
-}
-
-.stat-card h3 {
-    font-size: 2.5rem;
-    margin-bottom: 0.5rem;
-    font-weight: 700;
-}
-
-.stat-card p {
-    margin-bottom: 0;
-    font-size: 0.9rem;
-    opacity: 0.9;
-}
-
-.stat-cultural {
-    background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
-}
-
-.stat-profissional {
-    background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
-}
-
-.stat-bolsa {
-    background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
-}
+.stat-cultural { background: linear-gradient(135deg, var(--primary-color) 0%, #7b5ea3 100%); }
+.stat-profissional { background: linear-gradient(135deg, var(--secondary-color) 0%, #4a4a4a 100%); }
+.stat-bolsa { background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); }
 
 /* Formulários */
-.form-label {
-    font-weight: 600;
-    margin-bottom: 0.5rem;
-    color: #495057;
-}
-
-.form-label.required::after {
-    content: " *";
-    color: var(--danger-color);
-}
-
-.form-control, .form-select {
-    border-radius: 8px;
-    border: 1px solid #ced4da;
-    padding: 0.75rem 1rem;
-    transition: all 0.3s ease;
-}
-
 .form-control:focus, .form-select:focus {
     border-color: var(--primary-color);
-    box-shadow: 0 0 0 0.25rem rgba(102, 126, 234, 0.25);
+    box-shadow: 0 0 0 0.25rem rgba(166, 137, 189, 0.2);
 }
 
-.form-check-input:checked {
+/* Login - Estilo Extra */
+.login-btn {
     background-color: var(--primary-color);
-    border-color: var(--primary-color);
-}
-
-/* Tabelas */
-.table {
-    margin-bottom: 0;
-}
-
-.table th {
-    font-weight: 600;
-    color: #495057;
-    background-color: #f8f9fa;
-    border-bottom: 2px solid #dee2e6;
-}
-
-.table td {
-    vertical-align: middle;
-}
-
-.table-hover tbody tr:hover {
-    background-color: rgba(102, 126, 234, 0.05);
-}
-
-/* Badges */
-.badge {
-    padding: 0.5em 0.8em;
-    border-radius: 20px;
-    font-weight: 500;
-}
-
-/* Alertas */
-.alert {
-    border-radius: 10px;
     border: none;
-    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    font-weight: bold;
 }
 
-/* Responsividade */
-@media (max-width: 768px) {
-    .header {
-        padding: 1.5rem 0;
-    }
-
-    .header h1 {
-        font-size: 1.8rem;
-    }
-
-    .stat-card {
-        padding: 20px 10px;
-    }
-
-    .stat-card h3 {
-        font-size: 2rem;
-    }
-
-    .btn-group {
-        flex-direction: column;
-        gap: 5px;
-    }
-
-    .btn-group .btn {
-        width: 100%;
-    }
-}
-
-/* Animações */
-@keyframes fadeIn {
-    from {
-        opacity: 0;
-        transform: translateY(20px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
-
-.fade-in {
-    animation: fadeIn 0.5s ease-out;
-}
-
-/* Scroll personalizado */
-::-webkit-scrollbar {
-    width: 8px;
-}
-
-::-webkit-scrollbar-track {
-    background: #f1f1f1;
-    border-radius: 4px;
-}
-
-::-webkit-scrollbar-thumb {
-    background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
-    border-radius: 4px;
-}
-
-::-webkit-scrollbar-thumb:hover {
-    background: linear-gradient(135deg, #5a67d8 0%, #6b46c1 100%);
+.login-btn:hover {
+    background-color: #8e73a5 !important;
 }
