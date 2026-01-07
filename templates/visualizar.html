@@ -1,0 +1,127 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-lg-10">
+        <div class="card">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h4 class="mb-0"><i class="bi bi-person-badge"></i> Detalhes do Aluno</h4>
+                <div class="btn-group">
+                    <a href="{{ url_for('editar', id=aluno.id) }}" class="btn btn-warning">
+                        <i class="bi bi-pencil"></i> Editar
+                    </a>
+                    <a href="{{ url_for('index') }}" class="btn btn-secondary">
+                        <i class="bi bi-arrow-left"></i> Voltar
+                    </a>
+                </div>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <!-- Coluna da Foto -->
+                    <div class="col-md-4 text-center mb-4">
+                        {% if aluno.foto %}
+                        <img src="{{ url_for('uploaded_file', filename=aluno.foto) }}" 
+                             class="aluno-foto mb-3" 
+                             alt="{{ aluno.nome_completo }}"
+                             style="width: 250px; height: 250px;">
+                        {% else %}
+                        <div class="aluno-foto bg-secondary d-flex align-items-center justify-content-center mx-auto mb-3"
+                             style="width: 250px; height: 250px;">
+                            <i class="bi bi-person-fill text-white" style="font-size: 4rem;"></i>
+                        </div>
+                        {% endif %}
+                        <h4>{{ aluno.nome_completo }}</h4>
+                        <p class="text-muted">ID: {{ aluno.id }}</p>
+                    </div>
+
+                    <!-- Coluna dos Dados -->
+                    <div class="col-md-8">
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <h6 class="text-muted">Data de Nascimento</h6>
+                                <p>{{ format_date(aluno.data_nascimento) }}</p>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <h6 class="text-muted">Idade</h6>
+                                <p><span class="badge bg-info">{{ aluno.idade }} anos</span></p>
+                            </div>
+
+                            <div class="col-md-6 mb-3">
+                                <h6 class="text-muted">Pais/Responsáveis</h6>
+                                <p>{{ aluno.nome_pais }}</p>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <h6 class="text-muted">Curso</h6>
+                                <p>{{ aluno.curso }}</p>
+                            </div>
+
+                            <div class="col-md-6 mb-3">
+                                <h6 class="text-muted">Setor</h6>
+                                <p>
+                                    {% if aluno.setor == 'CULTURAL' %}
+                                    <span class="badge bg-primary">Cultural</span>
+                                    {% else %}
+                                    <span class="badge bg-success">Profissionalizante</span>
+                                    {% endif %}
+                                </p>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <h6 class="text-muted">Escola</h6>
+                                <p>{{ aluno.escola }}</p>
+                            </div>
+
+                            <div class="col-md-12 mb-3">
+                                <h6 class="text-muted">Endereço</h6>
+                                <p>{{ aluno.endereco }}</p>
+                            </div>
+
+                            <div class="col-md-6 mb-3">
+                                <h6 class="text-muted">Trabalho (Ficha Adulto)</h6>
+                                <p>{{ 'Sim' if aluno.trabalho_ficha_adulto else 'Não' }}</p>
+                            </div>
+                            {% if aluno.trabalho_ficha_adulto %}
+                            <div class="col-md-6 mb-3">
+                                <h6 class="text-muted">Profissão/Trabalho</h6>
+                                <p>{{ aluno.nome_trabalho_profissao }}</p>
+                            </div>
+                            {% endif %}
+
+                            <div class="col-md-6 mb-3">
+                                <h6 class="text-muted">Bolsa Família</h6>
+                                <p>{{ 'Sim' if aluno.bolsa_familia else 'Não' }}</p>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <h6 class="text-muted">Irmãos</h6>
+                                <p>{{ aluno.irmaos }}</p>
+                            </div>
+
+                            <div class="col-md-6 mb-3">
+                                <h6 class="text-muted">Renda Familiar</h6>
+                                <p>{{ format_currency(aluno.renda_familiar) }}</p>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <h6 class="text-muted">Pessoas na Residência</h6>
+                                <p>{{ aluno.pessoas_residencia }}</p>
+                            </div>
+
+                            {% if aluno.observacao %}
+                            <div class="col-md-12 mb-3">
+                                <h6 class="text-muted">Observações</h6>
+                                <div class="border rounded p-3 bg-light">
+                                    {{ aluno.observacao|replace('\n', '<br>')|safe }}
+                                </div>
+                            </div>
+                            {% endif %}
+
+                            <div class="col-md-6 mb-3">
+                                <h6 class="text-muted">Data de Cadastro</h6>
+                                <p>{{ aluno.data_cadastro.strftime('%d/%m/%Y %H:%M') }}</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

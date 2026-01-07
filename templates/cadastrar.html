@@ -1,0 +1,248 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-lg-10">
+        <div class="card">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h4 class="mb-0"><i class="bi bi-person-plus-fill"></i> Cadastrar Novo Aluno</h4>
+                <a href="{{ url_for('index') }}" class="btn btn-outline-primary">
+                    <i class="bi bi-arrow-left-circle"></i> Voltar
+                </a>
+            </div>
+            <div class="card-body">
+                <form method="POST" enctype="multipart/form-data" novalidate>
+                    {{ form.hidden_tag() }}
+
+                    <div class="row">
+                        <!-- Coluna da Foto -->
+                        <div class="col-md-4 mb-4">
+                            <div class="text-center">
+                                <div class="mb-3">
+                                    <img id="fotoPreview" src="#" 
+                                         class="aluno-foto d-none" 
+                                         alt="Preview da foto"
+                                         style="width: 200px; height: 200px;">
+                                    <div id="semFoto" class="aluno-foto bg-secondary d-flex align-items-center justify-content-center mx-auto"
+                                         style="width: 200px; height: 200px;">
+                                        <i class="bi bi-camera text-white" style="font-size: 3rem;"></i>
+                                    </div>
+                                </div>
+
+                                <div class="mb-3">
+                                    {{ form.foto.label(class="form-label required") }}
+                                    {{ form.foto(class="form-control", onchange="previewFoto(this)") }}
+                                    {% if form.foto.errors %}
+                                        <div class="text-danger">
+                                            {% for error in form.foto.errors %}
+                                                <small>{{ error }}</small>
+                                            {% endfor %}
+                                        </div>
+                                    {% endif %}
+                                    <small class="text-muted">Formatos: JPG, PNG, GIF (max 16MB)</small>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Coluna dos Dados Pessoais -->
+                        <div class="col-md-8">
+                            <h5 class="border-bottom pb-2 mb-3">Dados Pessoais</h5>
+
+                            <div class="row">
+                                <div class="col-md-12 mb-3">
+                                    {{ form.nome_completo.label(class="form-label required") }}
+                                    {{ form.nome_completo(class="form-control") }}
+                                    {% if form.nome_completo.errors %}
+                                        <div class="text-danger">
+                                            {% for error in form.nome_completo.errors %}
+                                                <small>{{ error }}</small>
+                                            {% endfor %}
+                                        </div>
+                                    {% endif %}
+                                </div>
+
+                                <div class="col-md-6 mb-3">
+                                    {{ form.data_nascimento.label(class="form-label required") }}
+                                    {{ form.data_nascimento(class="form-control") }}
+                                    {% if form.data_nascimento.errors %}
+                                        <div class="text-danger">
+                                            {% for error in form.data_nascimento.errors %}
+                                                <small>{{ error }}</small>
+                                            {% endfor %}
+                                        </div>
+                                    {% endif %}
+                                    <div class="mt-2">
+                                        <small>Idade calculada: <span id="idade_preview" class="badge bg-info">--</span></small>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-6 mb-3">
+                                    {{ form.nome_pais.label(class="form-label required") }}
+                                    {{ form.nome_pais(class="form-control") }}
+                                    {% if form.nome_pais.errors %}
+                                        <div class="text-danger">
+                                            {% for error in form.nome_pais.errors %}
+                                                <small>{{ error }}</small>
+                                            {% endfor %}
+                                        </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+
+                            <h5 class="border-bottom pb-2 mb-3 mt-4">Informações Acadêmicas</h5>
+
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    {{ form.curso.label(class="form-label required") }}
+                                    {{ form.curso(class="form-control") }}
+                                    {% if form.curso.errors %}
+                                        <div class="text-danger">
+                                            {% for error in form.curso.errors %}
+                                                <small>{{ error }}</small>
+                                            {% endfor %}
+                                        </div>
+                                    {% endif %}
+                                </div>
+
+                                <div class="col-md-6 mb-3">
+                                    {{ form.setor.label(class="form-label required") }}
+                                    {{ form.setor(class="form-select") }}
+                                    {% if form.setor.errors %}
+                                        <div class="text-danger">
+                                            {% for error in form.setor.errors %}
+                                                <small>{{ error }}</small>
+                                            {% endfor %}
+                                        </div>
+                                    {% endif %}
+                                </div>
+
+                                <div class="col-md-12 mb-3">
+                                    {{ form.escola.label(class="form-label required") }}
+                                    {{ form.escola(class="form-control") }}
+                                    {% if form.escola.errors %}
+                                        <div class="text-danger">
+                                            {% for error in form.escola.errors %}
+                                                <small>{{ error }}</small>
+                                            {% endfor %}
+                                        </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+
+                            <h5 class="border-bottom pb-2 mb-3 mt-4">Informações Socioeconômicas</h5>
+
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    {{ form.endereco.label(class="form-label required") }}
+                                    {{ form.endereco(class="form-control") }}
+                                    {% if form.endereco.errors %}
+                                        <div class="text-danger">
+                                            {% for error in form.endereco.errors %}
+                                                <small>{{ error }}</small>
+                                            {% endfor %}
+                                        </div>
+                                    {% endif %}
+                                </div>
+
+                                <div class="col-md-6 mb-3">
+                                    {{ form.pessoas_residencia.label(class="form-label required") }}
+                                    {{ form.pessoas_residencia(class="form-control") }}
+                                    {% if form.pessoas_residencia.errors %}
+                                        <div class="text-danger">
+                                            {% for error in form.pessoas_residencia.errors %}
+                                                <small>{{ error }}</small>
+                                            {% endfor %}
+                                        </div>
+                                    {% endif %}
+                                </div>
+
+                                <div class="col-md-6 mb-3">
+                                    {{ form.renda_familiar.label(class="form-label required") }}
+                                    {{ form.renda_familiar(class="form-control") }}
+                                    {% if form.renda_familiar.errors %}
+                                        <div class="text-danger">
+                                            {% for error in form.renda_familiar.errors %}
+                                                <small>{{ error }}</small>
+                                            {% endfor %}
+                                        </div>
+                                    {% endif %}
+                                </div>
+
+                                <div class="col-md-6 mb-3">
+                                    {{ form.irmaos.label(class="form-label required") }}
+                                    {{ form.irmaos(class="form-control") }}
+                                    {% if form.irmaos.errors %}
+                                        <div class="text-danger">
+                                            {% for error in form.irmaos.errors %}
+                                                <small>{{ error }}</small>
+                                            {% endfor %}
+                                        </div>
+                                    {% endif %}
+                                </div>
+
+                                <div class="col-md-6 mb-3">
+                                    <div class="form-check">
+                                        {{ form.bolsa_familia(class="form-check-input") }}
+                                        {{ form.bolsa_familia.label(class="form-check-label") }}
+                                    </div>
+                                </div>
+
+                                <div class="col-md-6 mb-3">
+                                    <div class="form-check">
+                                        {{ form.trabalho_ficha_adulto(class="form-check-input") }}
+                                        {{ form.trabalho_ficha_adulto.label(class="form-check-label") }}
+                                    </div>
+                                    {% if form.nome_trabalho_profissao.errors %}
+                                        <div class="text-danger">
+                                            {% for error in form.nome_trabalho_profissao.errors %}
+                                                <small>{{ error }}</small>
+                                            {% endfor %}
+                                        </div>
+                                    {% endif %}
+                                    {{ form.nome_trabalho_profissao(class="form-control", placeholder="Nome do trabalho ou profissão") }}
+                                </div>
+                            </div>
+
+                            <h5 class="border-bottom pb-2 mb-3 mt-4">Observações</h5>
+                            <div class="row">
+                                <div class="col-md-12 mb-3">
+                                    {{ form.observacao(class="form-control") }}
+                                    {% if form.observacao.errors %}
+                                        <div class="text-danger">
+                                            {% for error in form.observacao.errors %}
+                                                <small>{{ error }}</small>
+                                            {% endfor %}
+                                        </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+
+                            <div class="d-flex justify-content-end mt-4">
+                                <button type="submit" class="btn btn-primary">
+                                    <i class="bi bi-save"></i> Salvar
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    function previewFoto(input) {
+        if (input.files && input.files[0]) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const preview = document.getElementById('fotoPreview');
+                const semFoto = document.getElementById('semFoto');
+                preview.src = e.target.result;
+                preview.classList.remove('d-none');
+                semFoto.classList.add('d-none');
+            };
+            reader.readAsDataURL(input.files[0]);
+        }
+    }
+</script>
+{% endblock %}
