@@ -31,7 +31,7 @@ body {
     padding-top: 20px;
 }
 
-/* Header estilizado com gradiente do logo */
+/* Header estilizado */
 .header {
     background: linear-gradient(135deg, var(--primary-color) 0%, #7b5ea3 100%);
     color: white;
@@ -39,10 +39,6 @@ body {
     margin-bottom: 2rem;
     border-radius: 15px;
     box-shadow: 0 4px 20px rgba(0,0,0,0.1);
-}
-
-.logo-container {
-    text-align: center;
 }
 
 /* Cards e Listas */
@@ -61,7 +57,7 @@ body {
     font-weight: 600;
 }
 
-/* Botões baseados na cor da logo */
+/* Botões */
 .btn-primary {
     background: linear-gradient(135deg, var(--primary-color) 0%, #8e73a5 100%);
     border: none;
@@ -74,7 +70,7 @@ body {
     box-shadow: 0 4px 12px rgba(166, 137, 189, 0.3);
 }
 
-/* Fotos circulares dos alunos */
+/* Fotos */
 .aluno-foto {
     width: 65px;
     height: 65px;
@@ -84,7 +80,7 @@ body {
     background-color: #fff;
 }
 
-/* Cards de estatísticas */
+/* Cards de Estatísticas */
 .stat-card {
     text-align: center;
     padding: 20px;
@@ -98,19 +94,13 @@ body {
 .stat-profissional { background: linear-gradient(135deg, var(--secondary-color) 0%, #4a4a4a 100%); }
 .stat-bolsa { background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); }
 
+/* Cores para faixas etárias */
+.stat-crianca { background: linear-gradient(135deg, #2193b0 0%, #6dd5ed 100%); }
+.stat-adolescente { background: linear-gradient(135deg, #f2994a 0%, #f2c94c 100%); }
+.stat-adulto { background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%); }
+
 /* Formulários */
 .form-control:focus, .form-select:focus {
     border-color: var(--primary-color);
     box-shadow: 0 0 0 0.25rem rgba(166, 137, 189, 0.2);
-}
-
-/* Login - Estilo Extra */
-.login-btn {
-    background-color: var(--primary-color);
-    border: none;
-    font-weight: bold;
-}
-
-.login-btn:hover {
-    background-color: #8e73a5 !important;
 }

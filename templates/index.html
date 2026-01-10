@@ -25,6 +25,30 @@
     </div>
 </div>
 
+<div class="row mb-4">
+    <div class="col-md-4">
+        <div class="stat-card stat-crianca">
+            <h3><i class="bi bi-backpack"></i></h3> 
+            <h4>{{ criancas }}</h4>
+            <p>Crianças (até 11 anos)</p>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="stat-card stat-adolescente">
+            <h3><i class="bi bi-person-video"></i></h3>
+            <h4>{{ adolescentes }}</h4>
+            <p>Adolescentes (12 a 17 anos)</p>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="stat-card stat-adulto">
+            <h3><i class="bi bi-person-workspace"></i></h3>
+            <h4>{{ adultos }}</h4>
+            <p>Adultos (18+ anos)</p>
+        </div>
+    </div>
+</div>
+
 <div class="card">
     <div class="card-header d-flex justify-content-between align-items-center">
         <h4 class="mb-0"><i class="bi bi-list-ul"></i> Lista de Alunos ({{ total_alunos }})</h4>
@@ -92,13 +116,11 @@
                         <td>
                             <div class="btn-group" role="group">
                                 <a href="{{ url_for('visualizar', id=aluno.id) }}" 
-                                   class="btn btn-sm btn-info" 
-                                   title="Visualizar">
+                                   class="btn btn-sm btn-info" title="Visualizar">
                                     <i class="bi bi-eye"></i>
                                 </a>
                                 <a href="{{ url_for('editar', id=aluno.id) }}" 
-                                   class="btn btn-sm btn-warning" 
-                                   title="Editar">
+                                   class="btn btn-sm btn-warning" title="Editar">
                                     <i class="bi bi-pencil"></i>
                                 </a>
                                 <form action="{{ url_for('excluir', id=aluno.id) }}" 

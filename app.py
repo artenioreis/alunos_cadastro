@@ -83,7 +83,6 @@ def excluir_usuario(id):
     if id == session.get('user_id'):
         flash('Você não pode excluir o usuário que está usando no momento.', 'danger')
         return redirect(url_for('listar_usuarios'))
-    
     user = Usuario.query.get_or_404(id)
     db.session.delete(user)
     db.session.commit()
@@ -98,11 +97,18 @@ def index():
         alunos = Aluno.query.filter(Aluno.nome_completo.ilike(f'%{termo_busca}%')).order_by(Aluno.nome_completo).all()
     else:
         alunos = Aluno.query.order_by(Aluno.nome_completo).all()
+        
+    cultural = Aluno.query.filter_by(setor='CULTURAL', desistencia='NÃO').count()
+    profissional = Aluno.query.filter_by(setor='PROFISSIONALIZANTE', desistencia='NÃO').count()
+    bolsa = Aluno.query.filter_by(bolsa_familia=True, desistencia='NÃO').count()
     
-    cultural = Aluno.query.filter_by(setor='CULTURAL').count()
-    profissional = Aluno.query.filter_by(setor='PROFISSIONALIZANTE').count()
-    bolsa = Aluno.query.filter_by(bolsa_familia=True).count()
-    return render_template('index.html', alunos=alunos, cultural=cultural, profissionalizante=profissional, bolsa_familia=bolsa, total_alunos=len(alunos), termo_busca=termo_busca)
+    criancas = Aluno.query.filter(Aluno.idade < 12, Aluno.desistencia == 'NÃO').count()
+    adolescentes = Aluno.query.filter(Aluno.idade >= 12, Aluno.idade < 18, Aluno.desistencia == 'NÃO').count()
+    adultos = Aluno.query.filter(Aluno.idade >= 18, Aluno.desistencia == 'NÃO').count()
+    
+    return render_template('index.html', alunos=alunos, cultural=cultural, profissionalizante=profissional, 
+                           bolsa_familia=bolsa, criancas=criancas, adolescentes=adolescentes, adultos=adultos,
+                           total_alunos=len(alunos), termo_busca=termo_busca)
 
 @app.route('/cadastrar', methods=['GET', 'POST'])
 @login_required
@@ -138,8 +144,11 @@ def editar(id):
         aluno.foto = foto_atual
         aluno.atualizar_idade()
         db.session.commit()
-        flash('Atualizado com sucesso!', 'success')
+        flash('Cadastro atualizado!', 'success')
         return redirect(url_for('index'))
+    if request.method == 'GET':
+        form.data_cadastro.data = aluno.data_cadastro
+        form.data_nascimento.data = aluno.data_nascimento
     return render_template('editar.html', form=form, aluno=aluno)
 
 @app.route('/excluir/<int:id>', methods=['POST'])

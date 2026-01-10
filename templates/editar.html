@@ -2,10 +2,10 @@
 {% block content %}
 <div class="row justify-content-center">
     <div class="col-lg-10">
-        <div class="card">
+        <div class="card shadow">
             <div class="card-header d-flex justify-content-between align-items-center">
-                <h4 class="mb-0"><i class="bi bi-pencil-square"></i> Editar: {{ aluno.nome_completo }}</h4>
-                <a href="{{ url_for('index') }}" class="btn btn-secondary">Voltar</a>
+                <h4 class="mb-0"><i class="bi bi-pencil-square"></i> Editar Aluno</h4>
+                <a href="{{ url_for('index') }}" class="btn btn-secondary btn-sm">Voltar</a>
             </div>
             <div class="card-body">
                 <form method="POST" enctype="multipart/form-data">
@@ -13,44 +13,39 @@
                     <div class="row">
                         <div class="col-md-4 text-center">
                             {% if aluno.foto %}
-                            <img id="fotoPreview" src="{{ url_for('uploaded_file', filename=aluno.foto) }}" class="aluno-foto mb-3" style="width:200px; height:200px;">
-                            {% else %}
-                            <div id="semFoto" class="aluno-foto bg-secondary d-flex align-items-center justify-content-center mx-auto mb-3" style="width: 200px; height: 200px;">
-                                <i class="bi bi-person-fill text-white" style="font-size: 3rem;"></i>
-                            </div>
-                            <img id="fotoPreview" src="#" class="aluno-foto mb-3 d-none" style="width:200px; height:200px;">
+                                <img src="{{ url_for('uploaded_file', filename=aluno.foto) }}" class="aluno-foto mb-3 shadow" style="width:200px; height:200px;">
                             {% endif %}
-                            {{ form.foto.label(class="form-label") }}
-                            {{ form.foto(class="form-control") }}
+                            {{ form.foto.label(class="form-label") }}{{ form.foto(class="form-control") }}
                         </div>
                         <div class="col-md-8">
+                            <h5 class="border-bottom pb-2 mb-3">Status e Inscrição</h5>
+                            <div class="row bg-light p-3 rounded mb-4">
+                                <div class="col-md-6 mb-3">
+                                    {{ form.data_cadastro.label(class="form-label fw-bold") }}
+                                    {{ form.data_cadastro(class="form-control") }}
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    {{ form.desistencia.label(class="form-label fw-bold text-danger") }}
+                                    {{ form.desistencia(class="form-select border-danger") }}
+                                </div>
+                            </div>
+
+                            <h5 class="border-bottom pb-2 mb-3">Dados Pessoais</h5>
                             <div class="row">
                                 <div class="col-md-12 mb-3">{{ form.nome_completo.label }}{{ form.nome_completo(class="form-control") }}</div>
-                                <div class="col-md-6 mb-3">
-                                    {{ form.data_nascimento.label }}
-                                    {{ form.data_nascimento(class="form-control") }}
-                                    <div class="mt-2">
-                                        <small>Idade atual: <span id="idade_preview" class="badge bg-success">{{ aluno.idade }} anos</span></small>
-                                    </div>
-                                </div>
+                                <div class="col-md-6 mb-3">{{ form.cpf.label }}{{ form.cpf(class="form-control") }}</div>
+                                <div class="col-md-6 mb-3">{{ form.telefone.label }}{{ form.telefone(class="form-control") }}</div>
+                                <div class="col-md-6 mb-3">{{ form.data_nascimento.label }}{{ form.data_nascimento(class="form-control") }}</div>
                                 <div class="col-md-6 mb-3">{{ form.nome_pais.label }}{{ form.nome_pais(class="form-control") }}</div>
                                 <div class="col-md-6 mb-3">{{ form.curso.label }}{{ form.curso(class="form-control") }}</div>
                                 <div class="col-md-6 mb-3">{{ form.setor.label }}{{ form.setor(class="form-select") }}</div>
                                 <div class="col-md-12 mb-3">{{ form.escola.label }}{{ form.escola(class="form-control") }}</div>
                                 <div class="col-md-12 mb-3">{{ form.endereco.label }}{{ form.endereco(class="form-control") }}</div>
-                                <div class="col-md-4 mb-3">{{ form.pessoas_residencia.label }}{{ form.pessoas_residencia(class="form-control") }}</div>
                                 <div class="col-md-4 mb-3">{{ form.renda_familiar.label }}{{ form.renda_familiar(class="form-control") }}</div>
                                 <div class="col-md-4 mb-3">{{ form.irmaos.label }}{{ form.irmaos(class="form-control") }}</div>
-                                <div class="col-md-6 mb-3">
-                                    <div class="form-check">{{ form.bolsa_familia(class="form-check-input") }}{{ form.bolsa_familia.label }}</div>
-                                </div>
-                                <div class="col-md-6 mb-3">
-                                    <div class="form-check">{{ form.trabalho_ficha_adulto(class="form-check-input") }}{{ form.trabalho_ficha_adulto.label }}</div>
-                                    {{ form.nome_trabalho_profissao(class="form-control mt-2", placeholder="Profissão") }}
-                                </div>
-                                <div class="col-md-12 mb-3">{{ form.observacao.label }}{{ form.observacao(class="form-control", rows="3") }}</div>
+                                <div class="col-md-4 mb-3">{{ form.pessoas_residencia.label }}{{ form.pessoas_residencia(class="form-control") }}</div>
                             </div>
-                            <button type="submit" class="btn btn-primary w-100">Salvar Alterações</button>
+                            <button type="submit" class="btn btn-primary w-100 mt-3">Salvar Alterações</button>
                         </div>
                     </div>
                 </form>

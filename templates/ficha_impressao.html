@@ -5,122 +5,41 @@
     <title>Ficha de Cadastro - {{ aluno.nome_completo }}</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <style>
-        @media print {
-            .no-print { display: none; }
-            body { padding: 0; margin: 0; }
-            .container { width: 100%; max-width: 100%; }
-        }
+        @media print { .no-print { display: none; } body { padding: 0; margin: 0; } }
         body { background-color: white; font-family: sans-serif; }
-        .ficha-header { border-bottom: 2px solid #a689bd; padding-bottom: 20px; margin-bottom: 30px; }
-        .logo-print { max-height: 80px; }
-        .aluno-foto-print { width: 150px; height: 180px; object-fit: cover; border: 1px solid #ddd; }
-        .label-field { font-weight: bold; color: #555; font-size: 0.9rem; text-transform: uppercase; }
-        .value-field { border-bottom: 1px solid #eee; padding-bottom: 2px; margin-bottom: 15px; }
-        .section-title { background-color: #f8f9fa; padding: 5px 10px; font-weight: bold; border-left: 4px solid #a689bd; margin: 20px 0 15px 0; }
+        .ficha-header { border-bottom: 2px solid #a689bd; padding-bottom: 10px; margin-bottom: 20px; }
+        .logo-print { max-height: 70px; }
+        .aluno-foto-print { width: 140px; height: 160px; object-fit: cover; border: 1px solid #ddd; }
+        .label-field { font-weight: bold; color: #555; font-size: 0.8rem; text-transform: uppercase; }
+        .value-field { border-bottom: 1px solid #eee; padding-bottom: 2px; margin-bottom: 10px; font-size: 1rem; }
+        .section-title { background-color: #f8f9fa; padding: 5px 10px; font-weight: bold; border-left: 4px solid #a689bd; margin: 15px 0 10px 0; }
     </style>
 </head>
 <body onload="window.print()">
     <div class="container my-4">
-        <div class="no-print mb-4 text-center">
-            <button onclick="window.print()" class="btn btn-primary">Imprimir Agora</button>
-            <a href="{{ url_for('visualizar', id=aluno.id) }}" class="btn btn-secondary">Voltar</a>
-        </div>
-
         <div class="ficha-header d-flex justify-content-between align-items-center">
             <img src="{{ url_for('static', filename='images/cropped-sociedade_da_redencao_logotipo_retangular01_cor.png') }}" class="logo-print">
             <div class="text-end">
                 <h2 class="mb-0" style="color: #a689bd;">FICHA DE CADASTRO</h2>
-                <p class="text-muted small">Sociedade da Redenção - Fortaleza/CE</p>
+                <p class="mb-0 text-muted">Data da Inscrição: <strong>{{ aluno.data_cadastro.strftime('%d/%m/%Y') }}</strong></p>
             </div>
         </div>
 
         <div class="row">
             <div class="col-3 text-center">
-                {% if aluno.foto %}
-                    <img src="{{ url_for('uploaded_file', filename=aluno.foto) }}" class="aluno-foto-print shadow-sm">
-                {% else %}
-                    <div class="aluno-foto-print bg-light d-flex align-items-center justify-content-center text-muted">Sem Foto</div>
-                {% endif %}
-                <p class="mt-2 small text-muted">Matrícula: #{{ aluno.id }}</p>
+                {% if aluno.foto %}<img src="{{ url_for('uploaded_file', filename=aluno.foto) }}" class="aluno-foto-print">
+                {% else %}<div class="aluno-foto-print bg-light d-flex align-items-center justify-content-center">Sem Foto</div>{% endif %}
+                <p class="mt-2 small">Matrícula: #{{ aluno.id }}</p>
             </div>
-
             <div class="col-9">
                 <div class="row">
-                    <div class="col-12">
-                        <div class="label-field">Nome Completo</div>
-                        <div class="value-field">{{ aluno.nome_completo }}</div>
-                    </div>
-                    <div class="col-6">
-                        <div class="label-field">Data de Nascimento</div>
-                        <div class="value-field">{{ format_date(aluno.data_nascimento) }} ({{ aluno.idade }} anos)</div>
-                    </div>
-                    <div class="col-6">
-                        <div class="label-field">Setor / Curso</div>
-                        <div class="value-field">{{ aluno.setor }} - {{ aluno.curso }}</div>
-                    </div>
+                    <div class="col-12"><div class="label-field">Nome Completo</div><div class="value-field">{{ aluno.nome_completo }}</div></div>
+                    <div class="col-4"><div class="label-field">CPF</div><div class="value-field">{{ aluno.cpf if aluno.cpf else '---' }}</div></div>
+                    <div class="col-4"><div class="label-field">Telefone</div><div class="value-field">{{ aluno.telefone if aluno.telefone else '---' }}</div></div>
+                    <div class="col-4"><div class="label-field">Desistência</div><div class="value-field">{{ aluno.desistencia }}</div></div>
                 </div>
             </div>
         </div>
-
-        <div class="section-title">DADOS FAMILIARES E SOCIOECONÔMICOS</div>
-        <div class="row">
-            <div class="col-6">
-                <div class="label-field">Pais/Responsáveis</div>
-                <div class="value-field">{{ aluno.nome_pais }}</div>
-            </div>
-            <div class="col-6">
-                <div class="label-field">Endereço</div>
-                <div class="value-field">{{ aluno.endereco }}</div>
-            </div>
-            <div class="col-4">
-                <div class="label-field">Escola</div>
-                <div class="value-field">{{ aluno.escola }}</div>
-            </div>
-            <div class="col-4">
-                <div class="label-field">Renda Familiar</div>
-                <div class="value-field">{{ format_currency(aluno.renda_familiar) }}</div>
-            </div>
-            <div class="col-4">
-                <div class="label-field">Bolsa Família</div>
-                <div class="value-field">{{ 'Sim' if aluno.bolsa_familia else 'Não' }}</div>
-            </div>
         </div>
-
-        <div class="section-title">INFORMAÇÕES ADICIONAIS</div>
-        <div class="row">
-            <div class="col-6">
-                <div class="label-field">Trabalha (Ficha Adulto)?</div>
-                <div class="value-field">{{ 'Sim (' + aluno.nome_trabalho_profissao + ')' if aluno.trabalho_ficha_adulto else 'Não' }}</div>
-            </div>
-            <div class="col-3">
-                <div class="label-field">Qtd. Irmãos</div>
-                <div class="value-field">{{ aluno.irmaos }}</div>
-            </div>
-            <div class="col-3">
-                <div class="label-field">Pessoas na Casa</div>
-                <div class="value-field">{{ aluno.pessoas_residencia }}</div>
-            </div>
-            {% if aluno.observacao %}
-            <div class="col-12 mt-2">
-                <div class="label-field">Observações</div>
-                <div class="p-2 border rounded bg-light small">{{ aluno.observacao }}</div>
-            </div>
-            {% endif %}
-        </div>
-
-        <div class="mt-5 pt-5">
-            <div class="row text-center">
-                <div class="col-6">
-                    <div style="border-top: 1px solid #000; width: 80%; margin: 0 auto;"></div>
-                    <p class="small">Assinatura do Responsável</p>
-                </div>
-                <div class="col-6">
-                    <div style="border-top: 1px solid #000; width: 80%; margin: 0 auto;"></div>
-                    <p class="small">Coordenação - Sociedade da Redenção</p>
-                </div>
-            </div>
-            <p class="text-center mt-4 small text-muted">Documento gerado em {{ now.strftime('%d/%m/%Y às %H:%M') }}</p>
-        </div>
-    </div>
 </body>
 </html>
