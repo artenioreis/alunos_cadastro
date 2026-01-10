@@ -42,6 +42,7 @@ def login():
         user = Usuario.query.filter_by(username=form.username.data).first()
         if user and check_password_hash(user.password, form.password.data):
             session['logged_in'] = True
+            session['user_id'] = user.id
             session['username'] = user.username
             flash('Login realizado com sucesso!', 'success')
             return redirect(url_for('index'))
@@ -53,6 +54,12 @@ def logout():
     session.clear()
     flash('Você saiu do sistema.', 'info')
     return redirect(url_for('login'))
+
+@app.route('/usuarios')
+@login_required
+def listar_usuarios():
+    usuarios = Usuario.query.order_by(Usuario.username).all()
+    return render_template('usuarios.html', usuarios=usuarios)
 
 @app.route('/registrar_usuario', methods=['GET', 'POST'])
 @login_required
@@ -67,32 +74,35 @@ def registrar_usuario():
             db.session.add(novo_user)
             db.session.commit()
             flash(f'Usuário {novo_user.username} criado com sucesso!', 'success')
-            return redirect(url_for('index'))
+            return redirect(url_for('listar_usuarios'))
     return render_template('registrar_usuario.html', form=form)
+
+@app.route('/excluir_usuario/<int:id>', methods=['POST'])
+@login_required
+def excluir_usuario(id):
+    if id == session.get('user_id'):
+        flash('Você não pode excluir o usuário que está usando no momento.', 'danger')
+        return redirect(url_for('listar_usuarios'))
+    
+    user = Usuario.query.get_or_404(id)
+    db.session.delete(user)
+    db.session.commit()
+    flash('Usuário removido com sucesso!', 'success')
+    return redirect(url_for('listar_usuarios'))
 
 @app.route('/')
 @login_required
 def index():
-    # Captura o termo de busca enviado via URL (?q=...)
     termo_busca = request.args.get('q', '')
-    
     if termo_busca:
-        # Filtra alunos pelo nome completo (ilike ignora maiúsculas/minúsculas)
         alunos = Aluno.query.filter(Aluno.nome_completo.ilike(f'%{termo_busca}%')).order_by(Aluno.nome_completo).all()
     else:
         alunos = Aluno.query.order_by(Aluno.nome_completo).all()
-        
+    
     cultural = Aluno.query.filter_by(setor='CULTURAL').count()
     profissional = Aluno.query.filter_by(setor='PROFISSIONALIZANTE').count()
     bolsa = Aluno.query.filter_by(bolsa_familia=True).count()
-    
-    return render_template('index.html', 
-                           alunos=alunos, 
-                           cultural=cultural, 
-                           profissionalizante=profissional, 
-                           bolsa_familia=bolsa, 
-                           total_alunos=len(alunos),
-                           termo_busca=termo_busca)
+    return render_template('index.html', alunos=alunos, cultural=cultural, profissionalizante=profissional, bolsa_familia=bolsa, total_alunos=len(alunos), termo_busca=termo_busca)
 
 @app.route('/cadastrar', methods=['GET', 'POST'])
 @login_required
