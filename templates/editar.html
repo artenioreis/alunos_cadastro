@@ -13,7 +13,12 @@
                     <div class="row">
                         <div class="col-md-4 text-center">
                             {% if aluno.foto %}
-                            <img src="{{ url_for('uploaded_file', filename=aluno.foto) }}" class="aluno-foto mb-3" style="width:200px; height:200px;">
+                            <img id="fotoPreview" src="{{ url_for('uploaded_file', filename=aluno.foto) }}" class="aluno-foto mb-3" style="width:200px; height:200px;">
+                            {% else %}
+                            <div id="semFoto" class="aluno-foto bg-secondary d-flex align-items-center justify-content-center mx-auto mb-3" style="width: 200px; height: 200px;">
+                                <i class="bi bi-person-fill text-white" style="font-size: 3rem;"></i>
+                            </div>
+                            <img id="fotoPreview" src="#" class="aluno-foto mb-3 d-none" style="width:200px; height:200px;">
                             {% endif %}
                             {{ form.foto.label(class="form-label") }}
                             {{ form.foto(class="form-control") }}
@@ -21,7 +26,13 @@
                         <div class="col-md-8">
                             <div class="row">
                                 <div class="col-md-12 mb-3">{{ form.nome_completo.label }}{{ form.nome_completo(class="form-control") }}</div>
-                                <div class="col-md-6 mb-3">{{ form.data_nascimento.label }}{{ form.data_nascimento(class="form-control", type="date") }}</div>
+                                <div class="col-md-6 mb-3">
+                                    {{ form.data_nascimento.label }}
+                                    {{ form.data_nascimento(class="form-control") }}
+                                    <div class="mt-2">
+                                        <small>Idade atual: <span id="idade_preview" class="badge bg-success">{{ aluno.idade }} anos</span></small>
+                                    </div>
+                                </div>
                                 <div class="col-md-6 mb-3">{{ form.nome_pais.label }}{{ form.nome_pais(class="form-control") }}</div>
                                 <div class="col-md-6 mb-3">{{ form.curso.label }}{{ form.curso(class="form-control") }}</div>
                                 <div class="col-md-6 mb-3">{{ form.setor.label }}{{ form.setor(class="form-select") }}</div>

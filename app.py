@@ -73,11 +73,26 @@ def registrar_usuario():
 @app.route('/')
 @login_required
 def index():
-    alunos = Aluno.query.order_by(Aluno.nome_completo).all()
+    # Captura o termo de busca enviado via URL (?q=...)
+    termo_busca = request.args.get('q', '')
+    
+    if termo_busca:
+        # Filtra alunos pelo nome completo (ilike ignora maiúsculas/minúsculas)
+        alunos = Aluno.query.filter(Aluno.nome_completo.ilike(f'%{termo_busca}%')).order_by(Aluno.nome_completo).all()
+    else:
+        alunos = Aluno.query.order_by(Aluno.nome_completo).all()
+        
     cultural = Aluno.query.filter_by(setor='CULTURAL').count()
     profissional = Aluno.query.filter_by(setor='PROFISSIONALIZANTE').count()
     bolsa = Aluno.query.filter_by(bolsa_familia=True).count()
-    return render_template('index.html', alunos=alunos, cultural=cultural, profissionalizante=profissional, bolsa_familia=bolsa, total_alunos=len(alunos))
+    
+    return render_template('index.html', 
+                           alunos=alunos, 
+                           cultural=cultural, 
+                           profissionalizante=profissional, 
+                           bolsa_familia=bolsa, 
+                           total_alunos=len(alunos),
+                           termo_busca=termo_busca)
 
 @app.route('/cadastrar', methods=['GET', 'POST'])
 @login_required
@@ -133,6 +148,12 @@ def excluir(id):
 def visualizar(id):
     aluno = Aluno.query.get_or_404(id)
     return render_template('visualizar.html', aluno=aluno)
+
+@app.route('/imprimir/<int:id>')
+@login_required
+def imprimir(id):
+    aluno = Aluno.query.get_or_404(id)
+    return render_template('ficha_impressao.html', aluno=aluno)
 
 @app.route('/static/uploads/<filename>')
 def uploaded_file(filename):

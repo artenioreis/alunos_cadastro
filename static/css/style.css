@@ -11,6 +11,20 @@
     --dark-color: #2d2d2d;
 }
 
+@media print {
+    .navbar, .btn-group, .no-print, .alert {
+        display: none !important;
+    }
+    body {
+        background-color: white !important;
+        padding-top: 0 !important;
+    }
+    .card {
+        box-shadow: none !important;
+        border: none !important;
+    }
+}
+
 body {
     background-color: #f8f9fa;
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;

@@ -33,6 +33,23 @@
         </a>
     </div>
     <div class="card-body">
+        
+        <form method="GET" action="{{ url_for('index') }}" class="mb-4">
+            <div class="input-group">
+                <span class="input-group-text bg-white border-end-0">
+                    <i class="bi bi-search text-muted"></i>
+                </span>
+                <input type="text" name="q" class="form-control border-start-0" 
+                       placeholder="Pesquisar por nome do aluno..." value="{{ termo_busca }}">
+                <button class="btn btn-primary" type="submit">Buscar</button>
+                {% if termo_busca %}
+                <a href="{{ url_for('index') }}" class="btn btn-outline-secondary">
+                    <i class="bi bi-x-circle"></i> Limpar
+                </a>
+                {% endif %}
+            </div>
+        </form>
+
         {% if alunos %}
         <div class="table-responsive">
             <table class="table table-hover">
@@ -101,9 +118,15 @@
         </div>
         {% else %}
         <div class="text-center py-5">
+            {% if termo_busca %}
+            <i class="bi bi-search display-1 text-muted"></i>
+            <h3 class="text-muted mt-3">Nenhum resultado para "{{ termo_busca }}"</h3>
+            <a href="{{ url_for('index') }}" class="btn btn-link">Ver todos os alunos</a>
+            {% else %}
             <i class="bi bi-people display-1 text-muted"></i>
             <h3 class="text-muted mt-3">Nenhum aluno cadastrado</h3>
             <p class="text-muted">Clique no botão "Novo Aluno" para começar</p>
+            {% endif %}
         </div>
         {% endif %}
     </div>
