@@ -2,7 +2,7 @@
 {% block content %}
 <div class="row justify-content-center">
     <div class="col-lg-10">
-        <div class="card">
+        <div class="card shadow">
             <div class="card-header d-flex justify-content-between align-items-center">
                 <h4 class="mb-0"><i class="bi bi-person-badge"></i> Detalhes do Aluno</h4>
                 <div class="btn-group">
@@ -13,25 +13,51 @@
             </div>
             <div class="card-body">
                 <div class="row">
-                    <div class="col-md-4 text-center mb-4">
-                        {% if aluno.foto %}<img src="{{ url_for('uploaded_file', filename=aluno.foto) }}" class="aluno-foto mb-3" style="width: 250px; height: 250px;">
-                        {% else %}<div class="aluno-foto bg-secondary d-flex align-items-center justify-content-center mx-auto mb-3" style="width: 250px; height: 250px;"><i class="bi bi-person-fill text-white" style="font-size: 4rem;"></i></div>{% endif %}
-                        <h4>{{ aluno.nome_completo }}</h4>
-                        <p class="badge {{ 'bg-danger' if aluno.desistencia == 'SIM' else 'bg-success' }}">Status: {{ 'DESISTENTE' if aluno.desistencia == 'SIM' else 'ATIVO' }}</p>
+                    <div class="col-md-4 text-center mb-4 border-end">
+                        {% if aluno.foto %}
+                            <img src="{{ url_for('uploaded_file', filename=aluno.foto) }}" class="aluno-foto mb-3 shadow" style="width: 250px; height: 250px;">
+                        {% else %}
+                            <div class="aluno-foto bg-secondary d-flex align-items-center justify-content-center mx-auto mb-3 shadow" style="width: 250px; height: 250px;">
+                                <i class="bi bi-person-fill text-white" style="font-size: 5rem;"></i>
+                            </div>
+                        {% endif %}
+                        <h3 class="fw-bold">{{ aluno.nome_completo }}</h3>
+                        <p class="badge p-2 {{ 'bg-danger' if aluno.desistencia == 'SIM' else 'bg-success' }}">
+                            STATUS: {{ 'DESISTENTE' if aluno.desistencia == 'SIM' else 'ATIVO' }}
+                        </p>
                     </div>
 
                     <div class="col-md-8">
-                        <div class="row">
-                            <div class="col-md-6 mb-3"><h6 class="text-muted small">CPF</h6><p>{{ aluno.cpf if aluno.cpf else 'Não informado' }}</p></div>
-                            <div class="col-md-6 mb-3"><h6 class="text-muted small">Telefone</h6><p>{{ aluno.telefone if aluno.telefone else 'Não informado' }}</p></div>
-                            <div class="col-md-6 mb-3"><h6 class="text-muted small">Nascimento</h6><p>{{ format_date(aluno.data_nascimento) }} ({{ aluno.idade }} anos)</p></div>
-                            <div class="col-md-6 mb-3"><h6 class="text-muted small">Pais/Responsáveis</h6><p>{{ aluno.nome_pais }}</p></div>
-                            <div class="col-md-6 mb-3"><h6 class="text-muted small">Curso / Setor</h6><p>{{ aluno.curso }} ({{ aluno.setor }})</p></div>
-                            <div class="col-md-6 mb-3"><h6 class="text-muted small">Escola</h6><p>{{ aluno.escola }}</p></div>
-                            <div class="col-md-12 mb-3"><h6 class="text-muted small">Endereço</h6><p>{{ aluno.endereco }}</p></div>
-                            <div class="col-md-4 mb-3"><h6 class="text-muted small">Renda</h6><p>{{ format_currency(aluno.renda_familiar) }}</p></div>
-                            <div class="col-md-4 mb-3"><h6 class="text-muted small">Bolsa Família</h6><p>{{ 'Sim' if aluno.bolsa_familia else 'Não' }}</p></div>
-                            <div class="col-md-4 mb-3"><h6 class="text-muted small">Inscrição</h6><p>{{ aluno.data_cadastro.strftime('%d/%m/%Y %H:%M') }}</p></div>
+                        <h5 class="text-primary border-bottom pb-2 mb-3">Dados Pessoais e Acadêmicos</h5>
+                        <div class="row mb-3">
+                            <div class="col-md-6 mb-2"><strong>CPF:</strong> {{ aluno.cpf if aluno.cpf else '---' }}</div>
+                            <div class="col-md-6 mb-2"><strong>Telefone:</strong> {{ aluno.telefone if aluno.telefone else '---' }}</div>
+                            <div class="col-md-6 mb-2"><strong>Nascimento:</strong> {{ format_date(aluno.data_nascimento) }} ({{ aluno.idade }} anos)</div>
+                            <div class="col-md-6 mb-2"><strong>Responsáveis:</strong> {{ aluno.nome_pais }}</div>
+                            <div class="col-md-6 mb-2"><strong>Curso/Setor:</strong> {{ aluno.curso }} ({{ aluno.setor }})</div>
+                            <div class="col-md-6 mb-2"><strong>Escola:</strong> {{ aluno.escola }}</div>
+                            <div class="col-12 mb-2"><strong>Endereço:</strong> {{ aluno.endereco }}</div>
+                        </div>
+
+                        <h5 class="text-primary border-bottom pb-2 mb-3">Socioeconômicos</h5>
+                        <div class="row mb-3">
+                            <div class="col-md-4 mb-2"><strong>Renda:</strong> {{ format_currency(aluno.renda_familiar) }}</div>
+                            <div class="col-md-4 mb-2"><strong>Bolsa Família:</strong> {{ 'Sim' if aluno.bolsa_familia else 'Não' }}</div>
+                            <div class="col-md-4 mb-2"><strong>Irmãos:</strong> {{ aluno.irmaos }}</div>
+                            <div class="col-md-6 mb-2"><strong>Pessoas na Casa:</strong> {{ aluno.pessoas_residencia }}</div>
+                            <div class="col-md-6 mb-2"><strong>Trabalha:</strong> {{ 'Sim' if aluno.trabalho_ficha_adulto else 'Não' }} ({{ aluno.nome_trabalho_profissao if aluno.nome_trabalho_profissao else 'N/A' }})</div>
+                        </div>
+
+                        <h5 class="text-primary border-bottom pb-2 mb-3">Observações</h5>
+                        <div class="p-3 bg-light rounded border mb-4">
+                            {{ aluno.observacao if aluno.observacao else 'Sem observações.' }}
+                        </div>
+
+                        <div class="alert alert-info border-info">
+                            <h6 class="fw-bold text-uppercase mb-2">Declaração de Divulgação de Vídeo e Imagem</h6>
+                            <p class="mb-0 small italic">
+                                EU DECLARO PARA OS DEVIDOS FINS QUE PERMITO O USO DE MINHA IMAGEM COM O OBJETIVO DE DIVULGAÇÃO DO PROJETO "EM DEFESA DA VIDA", COORDENADO PELA SOCIEDADE DA REDENÇÃO-FORTALEZA.
+                            </p>
                         </div>
                     </div>
                 </div>
