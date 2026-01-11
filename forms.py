@@ -8,6 +8,10 @@ class AlunoForm(FlaskForm):
         FileAllowed(['jpg', 'jpeg', 'png', 'gif'], 'Apenas imagens são permitidas!')
     ], render_kw={"accept": "image/*", "class": "form-control"})
 
+    documento = FileField('Anexar Documento (PDF ou Imagem)', validators=[
+        FileAllowed(['pdf', 'jpg', 'jpeg', 'png'], 'Apenas PDF e imagens são permitidos!')
+    ], render_kw={"class": "form-control"})
+
     nome_completo = StringField('Nome Completo', validators=[
         DataRequired(message='Nome completo é obrigatório'),
         Length(min=3, max=100)
@@ -16,10 +20,7 @@ class AlunoForm(FlaskForm):
     cpf = StringField('CPF', validators=[Optional()], render_kw={"class": "form-control", "placeholder": "000.000.000-00"})
     telefone = StringField('Telefone', validators=[Optional()], render_kw={"class": "form-control", "placeholder": "(00) 00000-0000"})
     data_nascimento = DateField('Data de Nascimento', validators=[DataRequired()], format='%Y-%m-%d', render_kw={"type": "date", "class": "form-control"})
-    
-    # Campo para editar a data de inscrição
     data_cadastro = DateField('Data da Inscrição', validators=[Optional()], format='%Y-%m-%d', render_kw={"type": "date", "class": "form-control"})
-
     nome_pais = StringField('Nome dos Pais/Responsáveis', validators=[DataRequired()], render_kw={"class": "form-control"})
     curso = StringField('Curso', validators=[DataRequired()], render_kw={"class": "form-control"})
     setor = SelectField('Setor', choices=[('CULTURAL', 'Cultural'), ('PROFISSIONALIZANTE', 'Profissionalizante')], validators=[DataRequired()], render_kw={"class": "form-select"})
@@ -31,10 +32,7 @@ class AlunoForm(FlaskForm):
     irmaos = IntegerField('Irmãos', validators=[DataRequired(), NumberRange(min=0)], default=0, render_kw={"class": "form-control"})
     renda_familiar = FloatField('Renda Familiar', validators=[DataRequired()], render_kw={"class": "form-control"})
     pessoas_residencia = IntegerField('Pessoas na Residência', validators=[DataRequired()], render_kw={"class": "form-control"})
-    
-    # Campo de desistência
     desistencia = SelectField('Desistência', choices=[('NÃO', 'Não'), ('SIM', 'Sim')], validators=[DataRequired()], render_kw={"class": "form-select"})
-    
     observacao = TextAreaField('Observação', validators=[Optional()], render_kw={"class": "form-control", "rows": 3})
 
 class LoginForm(FlaskForm):

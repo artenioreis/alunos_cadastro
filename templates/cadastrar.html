@@ -3,7 +3,7 @@
 {% block content %}
 <div class="row justify-content-center">
     <div class="col-lg-10">
-        <div class="card">
+        <div class="card shadow">
             <div class="card-header d-flex justify-content-between align-items-center">
                 <h4 class="mb-0"><i class="bi bi-person-plus-fill"></i> Cadastrar Novo Aluno</h4>
                 <a href="{{ url_for('index') }}" class="btn btn-outline-primary">
@@ -19,7 +19,7 @@
                             <div class="text-center">
                                 <div class="mb-3">
                                     <img id="fotoPreview" src="#" class="aluno-foto d-none" alt="Preview" style="width: 200px; height: 200px;">
-                                    <div id="semFoto" class="aluno-foto bg-secondary d-flex align-items-center justify-content-center mx-auto" style="width: 200px; height: 200px;">
+                                    <div id="semFoto" class="aluno-foto bg-secondary d-flex align-items-center justify-content-center mx-auto" style="width: 200px; height: 200px; border-radius: 15px;">
                                         <i class="bi bi-camera text-white" style="font-size: 3rem;"></i>
                                     </div>
                                 </div>
@@ -27,11 +27,16 @@
                                     {{ form.foto.label(class="form-label") }}
                                     {{ form.foto(class="form-control") }}
                                 </div>
+                                <div class="mb-3">
+                                    {{ form.documento.label(class="form-label") }}
+                                    {{ form.documento(class="form-control") }}
+                                    <small class="text-muted">Formatos aceitos: PDF, JPG, PNG</small>
+                                </div>
                             </div>
                         </div>
 
                         <div class="col-md-8">
-                            <h5 class="border-bottom pb-2 mb-3">Dados Pessoais</h5>
+                            <h5 class="border-bottom pb-2 mb-3 text-primary">Dados Pessoais</h5>
                             <div class="row">
                                 <div class="col-md-12 mb-3">
                                     {{ form.nome_completo.label(class="form-label") }}
@@ -58,35 +63,35 @@
                                 </div>
                             </div>
 
-                            <h5 class="border-bottom pb-2 mb-3 mt-4">Informações Acadêmicas</h5>
+                            <h5 class="border-bottom pb-2 mb-3 mt-4 text-primary">Informações Acadêmicas</h5>
                             <div class="row">
-                                <div class="col-md-6 mb-3">{{ form.curso.label }}{{ form.curso(class="form-control") }}</div>
-                                <div class="col-md-6 mb-3">{{ form.setor.label }}{{ form.setor(class="form-select") }}</div>
-                                <div class="col-md-12 mb-3">{{ form.escola.label }}{{ form.escola(class="form-control") }}</div>
+                                <div class="col-md-6 mb-3">{{ form.curso.label(class="form-label") }}{{ form.curso(class="form-control") }}</div>
+                                <div class="col-md-6 mb-3">{{ form.setor.label(class="form-label") }}{{ form.setor(class="form-select") }}</div>
+                                <div class="col-md-12 mb-3">{{ form.escola.label(class="form-label") }}{{ form.escola(class="form-control") }}</div>
                             </div>
 
-                            <h5 class="border-bottom pb-2 mb-3 mt-4">Socioeconômicas e Status</h5>
+                            <h5 class="border-bottom pb-2 mb-3 mt-4 text-primary">Socioeconômicas e Status</h5>
                             <div class="row">
-                                <div class="col-md-12 mb-3">{{ form.endereco.label }}{{ form.endereco(class="form-control") }}</div>
-                                <div class="col-md-4 mb-3">{{ form.pessoas_residencia.label }}{{ form.pessoas_residencia(class="form-control") }}</div>
-                                <div class="col-md-4 mb-3">{{ form.renda_familiar.label }}{{ form.renda_familiar(class="form-control") }}</div>
-                                <div class="col-md-4 mb-3">{{ form.irmaos.label }}{{ form.irmaos(class="form-control") }}</div>
+                                <div class="col-md-12 mb-3">{{ form.endereco.label(class="form-label") }}{{ form.endereco(class="form-control") }}</div>
+                                <div class="col-md-4 mb-3">{{ form.pessoas_residencia.label(class="form-label") }}{{ form.pessoas_residencia(class="form-control") }}</div>
+                                <div class="col-md-4 mb-3">{{ form.renda_familiar.label(class="form-label") }}{{ form.renda_familiar(class="form-control") }}</div>
+                                <div class="col-md-4 mb-3">{{ form.irmaos.label(class="form-label") }}{{ form.irmaos(class="form-control") }}</div>
                                 <div class="col-md-4 mb-3">
-                                    {{ form.desistencia.label(class="form-label text-danger font-weight-bold") }}
+                                    {{ form.desistencia.label(class="form-label text-danger fw-bold") }}
                                     {{ form.desistencia(class="form-select border-danger") }}
                                 </div>
                                 <div class="col-md-4 mb-3 mt-4">
-                                    <div class="form-check">{{ form.bolsa_familia(class="form-check-input") }}{{ form.bolsa_familia.label }}</div>
+                                    <div class="form-check">{{ form.bolsa_familia(class="form-check-input") }}{{ form.bolsa_familia.label(class="form-check-label") }}</div>
                                 </div>
                                 <div class="col-md-4 mb-3 mt-4">
-                                    <div class="form-check">{{ form.trabalho_ficha_adulto(class="form-check-input") }}{{ form.trabalho_ficha_adulto.label }}</div>
+                                    <div class="form-check">{{ form.trabalho_ficha_adulto(class="form-check-input") }}{{ form.trabalho_ficha_adulto.label(class="form-check-label") }}</div>
                                 </div>
                                 <div class="col-md-12 mb-3">{{ form.nome_trabalho_profissao(class="form-control", placeholder="Nome do trabalho ou profissão") }}</div>
-                                <div class="col-md-12 mb-3">{{ form.observacao.label }}{{ form.observacao(class="form-control") }}</div>
+                                <div class="col-md-12 mb-3">{{ form.observacao.label(class="form-label") }}{{ form.observacao(class="form-control") }}</div>
                             </div>
 
                             <div class="d-flex justify-content-end mt-4">
-                                <button type="submit" class="btn btn-primary"><i class="bi bi-save"></i> Salvar</button>
+                                <button type="submit" class="btn btn-primary btn-lg px-5 shadow-sm"><i class="bi bi-save"></i> Salvar Cadastro</button>
                             </div>
                         </div>
                     </div>

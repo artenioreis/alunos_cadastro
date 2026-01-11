@@ -15,9 +15,11 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['UPLOAD_FOLDER'] = os.path.join(BASE_DIR, 'static', 'uploads')
 
 db.init_app(app)
+with app.app_context():
+    db.create_all() # Corrige o erro de tabela inexistente
+
 os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
 
-# Decorador para proteger rotas que exigem login
 def login_required(f):
     @wraps(f)
     def decorated_function(*args, **kwargs):
@@ -26,14 +28,13 @@ def login_required(f):
         return f(*args, **kwargs)
     return decorated_function
 
-# Função auxiliar para salvar fotos com nome único
-def salvar_foto(foto_file):
-    if foto_file and hasattr(foto_file, 'filename') and foto_file.filename != '':
+def salvar_arquivo(file):
+    if file and hasattr(file, 'filename') and file.filename != '':
         timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
-        filename = secure_filename(foto_file.filename)
+        filename = secure_filename(file.filename)
         nome_arquivo = f"{timestamp}_{filename}"
         caminho = os.path.join(app.config['UPLOAD_FOLDER'], nome_arquivo)
-        foto_file.save(caminho)
+        file.save(caminho)
         return nome_arquivo
     return None
 
@@ -100,15 +101,11 @@ def index():
     else:
         alunos = Aluno.query.order_by(Aluno.nome_completo).all()
     
-    # Cálculos para os 8 cards do painel
     ativos = Aluno.query.filter_by(desistencia='NÃO').count()
     desistentes = Aluno.query.filter_by(desistencia='SIM').count()
-    
-    # Estatísticas considerando apenas alunos ativos
     cultural = Aluno.query.filter_by(setor='CULTURAL', desistencia='NÃO').count()
     profissional = Aluno.query.filter_by(setor='PROFISSIONALIZANTE', desistencia='NÃO').count()
     bolsa = Aluno.query.filter_by(bolsa_familia=True, desistencia='NÃO').count()
-    
     criancas = Aluno.query.filter(Aluno.idade < 12, Aluno.desistencia == 'NÃO').count()
     adolescentes = Aluno.query.filter(Aluno.idade >= 12, Aluno.idade < 18, Aluno.desistencia == 'NÃO').count()
     adultos = Aluno.query.filter(Aluno.idade >= 18, Aluno.desistencia == 'NÃO').count()
@@ -131,10 +128,12 @@ def index():
 def cadastrar():
     form = AlunoForm()
     if form.validate_on_submit():
-        foto_nome = salvar_foto(form.foto.data)
+        foto_nome = salvar_arquivo(form.foto.data)
+        doc_nome = salvar_arquivo(form.documento.data)
         novo_aluno = Aluno()
         form.populate_obj(novo_aluno)
         novo_aluno.foto = foto_nome
+        novo_aluno.documento = doc_nome
         novo_aluno.atualizar_idade()
         db.session.add(novo_aluno)
         db.session.commit()
@@ -148,32 +147,40 @@ def editar(id):
     aluno = Aluno.query.get_or_404(id)
     form = AlunoForm(obj=aluno)
     if form.validate_on_submit():
-        foto_atual = aluno.foto
-        if form.foto.data and hasattr(form.foto.data, 'filename') and form.foto.data.filename != '':
-            nova = salvar_foto(form.foto.data)
-            if nova:
+        if form.foto.data:
+            nova_foto = salvar_arquivo(form.foto.data)
+            if nova_foto:
                 if aluno.foto:
-                    path = os.path.join(app.config['UPLOAD_FOLDER'], aluno.foto)
-                    if os.path.exists(path): os.remove(path)
-                foto_atual = nova
+                    p = os.path.join(app.config['UPLOAD_FOLDER'], aluno.foto)
+                    if os.path.exists(p): os.remove(p)
+                aluno.foto = nova_foto
+        if form.documento.data:
+            novo_doc = salvar_arquivo(form.documento.data)
+            if novo_doc:
+                if aluno.documento:
+                    p = os.path.join(app.config['UPLOAD_FOLDER'], aluno.documento)
+                    if os.path.exists(p): os.remove(p)
+                aluno.documento = novo_doc
+        
+        foto_temp = aluno.foto
+        doc_temp = aluno.documento
         form.populate_obj(aluno)
-        aluno.foto = foto_atual
+        aluno.foto = foto_temp
+        aluno.documento = doc_temp
         aluno.atualizar_idade()
         db.session.commit()
         flash('Cadastro atualizado!', 'success')
         return redirect(url_for('index'))
-    if request.method == 'GET':
-        form.data_cadastro.data = aluno.data_cadastro
-        form.data_nascimento.data = aluno.data_nascimento
     return render_template('editar.html', form=form, aluno=aluno)
 
 @app.route('/excluir/<int:id>', methods=['POST'])
 @login_required
 def excluir(id):
     aluno = Aluno.query.get_or_404(id)
-    if aluno.foto:
-        path = os.path.join(app.config['UPLOAD_FOLDER'], aluno.foto)
-        if os.path.exists(path): os.remove(path)
+    for arq in [aluno.foto, aluno.documento]:
+        if arq:
+            path = os.path.join(app.config['UPLOAD_FOLDER'], arq)
+            if os.path.exists(path): os.remove(path)
     db.session.delete(aluno)
     db.session.commit()
     flash('Aluno excluído com sucesso!', 'success')
@@ -195,24 +202,15 @@ def imprimir(id):
 def uploaded_file(filename):
     return send_from_directory(app.config['UPLOAD_FOLDER'], filename)
 
-# Processador de contexto para funções utilitárias nos templates
 @app.context_processor
 def utility_processor():
     def format_currency(value): 
         return f"R$ {value:,.2f}".replace('.', ',') if value is not None else "R$ 0,00"
-    
     def format_date(value): 
         return value.strftime('%d/%m/%Y') if value else ""
-    
     def format_boolean(value):
         return "SIM" if value else "NÃO"
-        
-    return dict(
-        format_currency=format_currency, 
-        format_date=format_date, 
-        format_boolean=format_boolean,
-        now=datetime.now()
-    )
+    return dict(format_currency=format_currency, format_date=format_date, format_boolean=format_boolean, now=datetime.now())
 
 if __name__ == '__main__':
     app.run(debug=True)

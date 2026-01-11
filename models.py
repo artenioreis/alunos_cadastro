@@ -20,6 +20,7 @@ class Usuario(db.Model):
 class Aluno(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     foto = db.Column(db.String(200), nullable=True)
+    documento = db.Column(db.String(200), nullable=True) # Novo campo para anexos
     nome_completo = db.Column(db.String(100), nullable=False)
     cpf = db.Column(db.String(14), nullable=True)
     telefone = db.Column(db.String(20), nullable=True)

@@ -25,6 +25,20 @@
                         <p class="badge {{ 'bg-danger' if aluno.desistencia == 'SIM' else 'bg-success' }} fs-6">
                             Status: {{ 'DESISTENTE' if aluno.desistencia == 'SIM' else 'ATIVO' }}
                         </p>
+
+                        {% if aluno.documento %}
+                        <div class="mt-3 px-3">
+                            <a href="{{ url_for('uploaded_file', filename=aluno.documento) }}" target="_blank" class="btn btn-outline-primary btn-sm w-100">
+                                <i class="bi bi-file-earmark-pdf"></i> Visualizar Documento Anexo
+                            </a>
+                        </div>
+                        {% else %}
+                        <div class="mt-3 px-3">
+                            <button class="btn btn-outline-secondary btn-sm w-100" disabled>
+                                <i class="bi bi-file-earmark-x"></i> Sem Documento Anexo
+                            </button>
+                        </div>
+                        {% endif %}
                     </div>
 
                     <div class="col-md-8">
@@ -37,11 +51,20 @@
                             <div class="col-md-12 mb-3"><h6 class="text-muted small">Endereço</h6><p class="fw-bold">{{ aluno.endereco }}</p></div>
                         </div>
 
+                        <h5 class="border-bottom pb-2 mb-3 mt-3 text-primary"><i class="bi bi-book"></i> Informações Acadêmicas</h5>
+                        <div class="row">
+                            <div class="col-md-4 mb-3"><h6 class="text-muted small">Curso</h6><p class="fw-bold">{{ aluno.curso }}</p></div>
+                            <div class="col-md-4 mb-3"><h6 class="text-muted small">Setor</h6><p class="fw-bold text-primary">{{ aluno.setor }}</p></div>
+                            <div class="col-md-4 mb-3"><h6 class="text-muted small">Escola</h6><p class="fw-bold">{{ aluno.escola }}</p></div>
+                        </div>
+
                         <h5 class="border-bottom pb-2 mb-3 mt-3 text-primary"><i class="bi bi-house-heart"></i> Socioeconômico e Trabalho</h5>
                         <div class="row">
                             <div class="col-md-4 mb-3"><h6 class="text-muted small">Renda Familiar</h6><p class="fw-bold text-success">{{ format_currency(aluno.renda_familiar) }}</p></div>
                             <div class="col-md-4 mb-3"><h6 class="text-muted small">Bolsa Família</h6><p class="fw-bold">{{ format_boolean(aluno.bolsa_familia) }}</p></div>
                             <div class="col-md-4 mb-3"><h6 class="text-muted small">Trabalha?</h6><p class="fw-bold">{{ format_boolean(aluno.trabalho_ficha_adulto) }}</p></div>
+                            <div class="col-md-4 mb-3"><h6 class="text-muted small">Irmãos</h6><p class="fw-bold">{{ aluno.irmaos }}</p></div>
+                            <div class="col-md-4 mb-3"><h6 class="text-muted small">Pessoas na Casa</h6><p class="fw-bold">{{ aluno.pessoas_residencia }}</p></div>
                             <div class="col-md-12 mb-3"><h6 class="text-muted small">Profissão/Local de Trabalho</h6><p class="fw-bold">{{ aluno.nome_trabalho_profissao or '---' }}</p></div>
                         </div>
 
@@ -49,6 +72,10 @@
                         <h5 class="border-bottom pb-2 mb-3 mt-3 text-primary">Observações</h5>
                         <div class="p-3 bg-light rounded border">{{ aluno.observacao }}</div>
                         {% endif %}
+
+                        <div class="mt-4 text-muted small border-top pt-2">
+                            <i class="bi bi-calendar-event"></i> Aluno cadastrado em: {{ format_date(aluno.data_cadastro) }}
+                        </div>
                     </div>
                 </div>
             </div>
