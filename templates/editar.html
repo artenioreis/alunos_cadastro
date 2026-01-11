@@ -5,18 +5,51 @@
         <div class="card shadow">
             <div class="card-header d-flex justify-content-between align-items-center">
                 <h4 class="mb-0"><i class="bi bi-pencil-square"></i> Editar Aluno</h4>
-                <a href="{{ url_for('visualizar', id=aluno.id) }}" class="btn btn-secondary btn-sm">Cancelar</a>
+                <div class="btn-group">
+                    <a href="{{ url_for('visualizar', id=aluno.id) }}" class="btn btn-secondary btn-sm">Cancelar</a>
+                </div>
             </div>
             <div class="card-body">
                 <form method="POST" enctype="multipart/form-data">
                     {{ form.hidden_tag() }}
                     <div class="row">
                         <div class="col-md-4 text-center">
-                            {% if aluno.foto %}
-                                <img src="{{ url_for('uploaded_file', filename=aluno.foto) }}" class="aluno-foto mb-3 shadow" style="width:200px; height:200px; border-radius: 15px; object-fit: cover;">
-                            {% endif %}
-                            {{ form.foto.label(class="form-label") }}{{ form.foto(class="form-control") }}
+                            <div class="mb-4">
+                                {% if aluno.foto %}
+                                    <img src="{{ url_for('uploaded_file', filename=aluno.foto) }}" class="aluno-foto mb-3 shadow" style="width:200px; height:200px; border-radius: 15px; object-fit: cover;">
+                                {% else %}
+                                    <div class="aluno-foto bg-secondary d-flex align-items-center justify-content-center mx-auto mb-3" style="width: 200px; height: 200px; border-radius: 15px;">
+                                        <i class="bi bi-camera text-white" style="font-size: 3rem;"></i>
+                                    </div>
+                                {% endif %}
+                                {{ form.foto.label(class="form-label fw-bold") }}
+                                {{ form.foto(class="form-control") }}
+                            </div>
+
+                            <hr>
+
+                            <div class="mb-3 px-2">
+                                <h6 class="text-start fw-bold mb-2">Documento Anexo</h6>
+                                {% if aluno.documento %}
+                                    <div class="alert alert-info py-2 mb-2">
+                                        <a href="{{ url_for('uploaded_file', filename=aluno.documento) }}" target="_blank" class="btn btn-outline-primary btn-sm w-100">
+                                            <i class="bi bi-file-earmark-pdf"></i> Visualizar Documento Atual
+                                        </a>
+                                    </div>
+                                {% else %}
+                                    <div class="alert alert-light border py-2 mb-2">
+                                        <small class="text-muted"><i class="bi bi-file-earmark-x"></i> Sem anexo atual</small>
+                                    </div>
+                                {% endif %}
+                                
+                                <div class="text-start">
+                                    {{ form.documento.label(class="form-label small fw-bold") }}
+                                    {{ form.documento(class="form-control form-control-sm") }}
+                                    <small class="text-muted d-block mt-1" style="font-size: 0.75rem;">Formatos aceitos: PDF, JPG, PNG</small>
+                                </div>
+                            </div>
                         </div>
+
                         <div class="col-md-8">
                             <h5 class="border-bottom pb-2 mb-3 text-primary">Status e Inscrição</h5>
                             <div class="row bg-light p-3 rounded mb-4">
@@ -32,32 +65,32 @@
 
                             <h5 class="border-bottom pb-2 mb-3 text-primary">Dados Pessoais</h5>
                             <div class="row">
-                                <div class="col-md-12 mb-3">{{ form.nome_completo.label }}{{ form.nome_completo(class="form-control") }}</div>
-                                <div class="col-md-6 mb-3">{{ form.cpf.label }}{{ form.cpf(class="form-control") }}</div>
-                                <div class="col-md-6 mb-3">{{ form.rg_certidao.label }}{{ form.rg_certidao(class="form-control") }}</div>
-                                <div class="col-md-6 mb-3">{{ form.telefone.label }}{{ form.telefone(class="form-control") }}</div>
-                                <div class="col-md-6 mb-3">{{ form.data_nascimento.label }}{{ form.data_nascimento(class="form-control") }}</div>
-                                <div class="col-md-12 mb-3">{{ form.nome_pais.label }}{{ form.nome_pais(class="form-control") }}</div>
-                                <div class="col-md-6 mb-3">{{ form.curso.label }}{{ form.curso(class="form-control") }}</div>
-                                <div class="col-md-6 mb-3">{{ form.setor.label }}{{ form.setor(class="form-select") }}</div>
-                                <div class="col-md-12 mb-3">{{ form.escola.label }}{{ form.escola(class="form-control") }}</div>
-                                <div class="col-md-12 mb-3">{{ form.endereco.label }}{{ form.endereco(class="form-control") }}</div>
+                                <div class="col-md-12 mb-3">{{ form.nome_completo.label(class="form-label") }}{{ form.nome_completo(class="form-control") }}</div>
+                                <div class="col-md-6 mb-3">{{ form.cpf.label(class="form-label") }}{{ form.cpf(class="form-control") }}</div>
+                                <div class="col-md-6 mb-3">{{ form.rg_certidao.label(class="form-label") }}{{ form.rg_certidao(class="form-control") }}</div>
+                                <div class="col-md-6 mb-3">{{ form.telefone.label(class="form-label") }}{{ form.telefone(class="form-control") }}</div>
+                                <div class="col-md-6 mb-3">{{ form.data_nascimento.label(class="form-label") }}{{ form.data_nascimento(class="form-control") }}</div>
+                                <div class="col-md-12 mb-3">{{ form.nome_pais.label(class="form-label") }}{{ form.nome_pais(class="form-control") }}</div>
+                                <div class="col-md-6 mb-3">{{ form.curso.label(class="form-label") }}{{ form.curso(class="form-control") }}</div>
+                                <div class="col-md-6 mb-3">{{ form.setor.label(class="form-label") }}{{ form.setor(class="form-select") }}</div>
+                                <div class="col-md-12 mb-3">{{ form.escola.label(class="form-label") }}{{ form.escola(class="form-control") }}</div>
+                                <div class="col-md-12 mb-3">{{ form.endereco.label(class="form-label") }}{{ form.endereco(class="form-control") }}</div>
                             </div>
 
                             <h5 class="border-bottom pb-2 mb-3 mt-4 text-primary">Socioeconômico</h5>
                             <div class="row">
-                                <div class="col-md-4 mb-3">{{ form.renda_familiar.label }}{{ form.renda_familiar(class="form-control") }}</div>
-                                <div class="col-md-4 mb-3">{{ form.irmaos.label }}{{ form.irmaos(class="form-control") }}</div>
-                                <div class="col-md-4 mb-3">{{ form.pessoas_residencia.label }}{{ form.pessoas_residencia(class="form-control") }}</div>
+                                <div class="col-md-4 mb-3">{{ form.renda_familiar.label(class="form-label") }}{{ form.renda_familiar(class="form-control") }}</div>
+                                <div class="col-md-4 mb-3">{{ form.irmaos.label(class="form-label") }}{{ form.irmaos(class="form-control") }}</div>
+                                <div class="col-md-4 mb-3">{{ form.pessoas_residencia.label(class="form-label") }}{{ form.pessoas_residencia(class="form-control") }}</div>
                                 <div class="col-md-6 mb-3">
-                                    <div class="form-check mt-2">{{ form.bolsa_familia(class="form-check-input") }}{{ form.bolsa_familia.label }}</div>
-                                    <div class="form-check mt-2">{{ form.trabalho_ficha_adulto(class="form-check-input") }}{{ form.trabalho_ficha_adulto.label }}</div>
+                                    <div class="form-check mt-2">{{ form.bolsa_familia(class="form-check-input") }}{{ form.bolsa_familia.label(class="form-check-label") }}</div>
+                                    <div class="form-check mt-2">{{ form.trabalho_ficha_adulto(class="form-check-input") }}{{ form.trabalho_ficha_adulto.label(class="form-check-label") }}</div>
                                 </div>
-                                <div class="col-md-6 mb-3">{{ form.nome_trabalho_profissao.label }}{{ form.nome_trabalho_profissao(class="form-control") }}</div>
-                                <div class="col-md-12 mb-3">{{ form.observacao.label }}{{ form.observacao(class="form-control", rows=3) }}</div>
+                                <div class="col-md-6 mb-3">{{ form.nome_trabalho_profissao.label(class="form-label") }}{{ form.nome_trabalho_profissao(class="form-control") }}</div>
+                                <div class="col-md-12 mb-3">{{ form.observacao.label(class="form-label") }}{{ form.observacao(class="form-control", rows=3) }}</div>
                             </div>
 
-                            <button type="submit" class="btn btn-primary w-100 mt-3 shadow-sm"><i class="bi bi-save"></i> Salvar Alterações</button>
+                            <button type="submit" class="btn btn-primary btn-lg w-100 mt-4 shadow-sm"><i class="bi bi-save"></i> Salvar Alterações</button>
                         </div>
                     </div>
                 </form>
