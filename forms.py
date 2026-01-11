@@ -18,6 +18,7 @@ class AlunoForm(FlaskForm):
     ], render_kw={"class": "form-control"})
 
     cpf = StringField('CPF', validators=[Optional()], render_kw={"class": "form-control", "placeholder": "000.000.000-00"})
+    rg_certidao = StringField('RG ou Certidão', validators=[Optional()], render_kw={"class": "form-control", "placeholder": "RG ou Número da Certidão"})
     telefone = StringField('Telefone', validators=[Optional()], render_kw={"class": "form-control", "placeholder": "(00) 00000-0000"})
     data_nascimento = DateField('Data de Nascimento', validators=[DataRequired()], format='%Y-%m-%d', render_kw={"type": "date", "class": "form-control"})
     data_cadastro = DateField('Data da Inscrição', validators=[Optional()], format='%Y-%m-%d', render_kw={"type": "date", "class": "form-control"})

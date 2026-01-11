@@ -16,7 +16,6 @@
         .ficha-header { border-bottom: 3px solid #a689bd; margin-bottom: 20px; padding-bottom: 10px; }
         .logo-print { max-height: 70px; }
         
-        /* Estilização para garantir que apareça na impressão */
         .section-title { 
             background-color: #f0f0f0 !important; 
             border-left: 6px solid #a689bd !important;
@@ -71,11 +70,15 @@
                             <div class="label-field">Nome Completo</div>
                             <div class="value-field fw-bold">{{ aluno.nome_completo }}</div>
                         </div>
-                        <div class="col-6">
+                        <div class="col-4">
                             <div class="label-field">CPF</div>
                             <div class="value-field">{{ aluno.cpf or '---' }}</div>
                         </div>
-                        <div class="col-6">
+                        <div class="col-4">
+                            <div class="label-field">RG / Certidão</div>
+                            <div class="value-field">{{ aluno.rg_certidao or '---' }}</div>
+                        </div>
+                        <div class="col-4">
                             <div class="label-field">Telefone</div>
                             <div class="value-field">{{ aluno.telefone or '---' }}</div>
                         </div>
@@ -146,8 +149,8 @@
 
             <div class="declaracao">
                 <strong>DECLARAÇÃO DE DIVULGAÇÃO DE VÍDEO E IMAGEM</strong><br>
-                EU DECLARO PARA OS DEVIDOS FINS,QUE PERMITO O USO DE MINHA IMAGEM COM O OBJETIVO DE DIVULGAÇÃO DO PROJETO 
-                'EM DEFESA DA VIDA' COORDENADO PELA SOCIEDADE DA REDENÇÃO-FORTALEZA
+                EU DECLARO QUE PERMITO O USO DE MINHA IMAGEM PARA DIVULGAÇÃO DO PROJETO "EM DEFESA DA VIDA", 
+                COORDENADO PELA SOCIEDADE DA REDENÇÃO-FORTALEZA.
             </div>
 
             <div class="row mt-4">

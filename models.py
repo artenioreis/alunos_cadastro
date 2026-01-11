@@ -7,6 +7,7 @@ def calcular_idade(data_nascimento):
     if not data_nascimento:
         return 0
     hoje = date.today()
+    # Correção: alterado de hoy.year para hoje.year
     idade = hoje.year - data_nascimento.year
     if (hoje.month, hoje.day) < (data_nascimento.month, data_nascimento.day):
         idade -= 1
@@ -20,9 +21,10 @@ class Usuario(db.Model):
 class Aluno(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     foto = db.Column(db.String(200), nullable=True)
-    documento = db.Column(db.String(200), nullable=True) # Novo campo para anexos
+    documento = db.Column(db.String(200), nullable=True)
     nome_completo = db.Column(db.String(100), nullable=False)
     cpf = db.Column(db.String(14), nullable=True)
+    rg_certidao = db.Column(db.String(50), nullable=True)  # Novo campo
     telefone = db.Column(db.String(20), nullable=True)
     data_nascimento = db.Column(db.Date, nullable=False)
     idade = db.Column(db.Integer, nullable=False)

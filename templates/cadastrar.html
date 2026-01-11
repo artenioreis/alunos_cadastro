@@ -47,6 +47,10 @@
                                     {{ form.cpf(class="form-control") }}
                                 </div>
                                 <div class="col-md-6 mb-3">
+                                    {{ form.rg_certidao.label(class="form-label") }}
+                                    {{ form.rg_certidao(class="form-control") }}
+                                </div>
+                                <div class="col-md-6 mb-3">
                                     {{ form.telefone.label(class="form-label") }}
                                     {{ form.telefone(class="form-control") }}
                                 </div>
@@ -57,7 +61,7 @@
                                         <small>Idade: <span id="idade_preview" class="badge bg-info">--</span></small>
                                     </div>
                                 </div>
-                                <div class="col-md-6 mb-3">
+                                <div class="col-md-12 mb-3">
                                     {{ form.nome_pais.label(class="form-label") }}
                                     {{ form.nome_pais(class="form-control") }}
                                 </div>
