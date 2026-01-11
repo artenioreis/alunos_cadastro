@@ -17,6 +17,7 @@ app.config['UPLOAD_FOLDER'] = os.path.join(BASE_DIR, 'static', 'uploads')
 db.init_app(app)
 os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
 
+# Decorador para proteger rotas que exigem login
 def login_required(f):
     @wraps(f)
     def decorated_function(*args, **kwargs):
@@ -25,6 +26,7 @@ def login_required(f):
         return f(*args, **kwargs)
     return decorated_function
 
+# Função auxiliar para salvar fotos com nome único
 def salvar_foto(foto_file):
     if foto_file and hasattr(foto_file, 'filename') and foto_file.filename != '':
         timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
@@ -97,7 +99,12 @@ def index():
         alunos = Aluno.query.filter(Aluno.nome_completo.ilike(f'%{termo_busca}%')).order_by(Aluno.nome_completo).all()
     else:
         alunos = Aluno.query.order_by(Aluno.nome_completo).all()
-        
+    
+    # Cálculos para os 8 cards do painel
+    ativos = Aluno.query.filter_by(desistencia='NÃO').count()
+    desistentes = Aluno.query.filter_by(desistencia='SIM').count()
+    
+    # Estatísticas considerando apenas alunos ativos
     cultural = Aluno.query.filter_by(setor='CULTURAL', desistencia='NÃO').count()
     profissional = Aluno.query.filter_by(setor='PROFISSIONALIZANTE', desistencia='NÃO').count()
     bolsa = Aluno.query.filter_by(bolsa_familia=True, desistencia='NÃO').count()
@@ -106,9 +113,18 @@ def index():
     adolescentes = Aluno.query.filter(Aluno.idade >= 12, Aluno.idade < 18, Aluno.desistencia == 'NÃO').count()
     adultos = Aluno.query.filter(Aluno.idade >= 18, Aluno.desistencia == 'NÃO').count()
     
-    return render_template('index.html', alunos=alunos, cultural=cultural, profissionalizante=profissional, 
-                           bolsa_familia=bolsa, criancas=criancas, adolescentes=adolescentes, adultos=adultos,
-                           total_alunos=len(alunos), termo_busca=termo_busca)
+    return render_template('index.html', 
+                           alunos=alunos, 
+                           cultural=cultural, 
+                           profissionalizante=profissional, 
+                           bolsa_familia=bolsa, 
+                           criancas=criancas, 
+                           adolescentes=adolescentes, 
+                           adultos=adultos,
+                           ativos=ativos,
+                           desistentes=desistentes,
+                           total_alunos=len(alunos), 
+                           termo_busca=termo_busca)
 
 @app.route('/cadastrar', methods=['GET', 'POST'])
 @login_required
@@ -160,6 +176,7 @@ def excluir(id):
         if os.path.exists(path): os.remove(path)
     db.session.delete(aluno)
     db.session.commit()
+    flash('Aluno excluído com sucesso!', 'success')
     return redirect(url_for('index'))
 
 @app.route('/visualizar/<int:id>')
@@ -178,6 +195,7 @@ def imprimir(id):
 def uploaded_file(filename):
     return send_from_directory(app.config['UPLOAD_FOLDER'], filename)
 
+# Processador de contexto para funções utilitárias nos templates
 @app.context_processor
 def utility_processor():
     def format_currency(value): 
@@ -192,7 +210,8 @@ def utility_processor():
     return dict(
         format_currency=format_currency, 
         format_date=format_date, 
-        format_boolean=format_boolean
+        format_boolean=format_boolean,
+        now=datetime.now()
     )
 
 if __name__ == '__main__':

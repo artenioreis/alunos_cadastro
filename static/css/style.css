@@ -1,4 +1,4 @@
-/* Estilos Sociedade da Redenção */
+/* Estilos Sociedade da Redenção - Ficheiro Completo */
 
 :root {
     --primary-color: #a689bd;    /* Roxo do logo */
@@ -11,8 +11,9 @@
     --dark-color: #2d2d2d;
 }
 
+/* Configurações de Impressão */
 @media print {
-    .navbar, .btn-group, .no-print, .alert {
+    .navbar, .btn-group, .no-print, .alert, .btn, form .btn {
         display: none !important;
     }
     body {
@@ -22,6 +23,12 @@
     .card {
         box-shadow: none !important;
         border: none !important;
+    }
+    .container {
+        width: 100% !important;
+        max-width: none !important;
+        margin: 0 !important;
+        padding: 0 !important;
     }
 }
 
@@ -70,7 +77,7 @@ body {
     box-shadow: 0 4px 12px rgba(166, 137, 189, 0.3);
 }
 
-/* Fotos */
+/* Fotos de Alunos */
 .aluno-foto {
     width: 65px;
     height: 65px;
@@ -80,21 +87,53 @@ body {
     background-color: #fff;
 }
 
-/* Cards de Estatísticas */
-.stat-card {
-    text-align: center;
-    padding: 20px;
+/* Estilo para foto maior na visualização/edição */
+.aluno-foto.mb-3 {
+    width: 200px;
+    height: 200px;
     border-radius: 15px;
-    color: white;
-    margin-bottom: 20px;
-    box-shadow: 0 4px 15px rgba(0,0,0,0.08);
 }
 
+/* Cards de Estatísticas (Dashboard) */
+.stat-card {
+    text-align: center;
+    padding: 15px 10px; /* Tamanho reduzido para caber 4 por linha */
+    border-radius: 12px;
+    color: white;
+    margin-bottom: 15px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+    transition: transform 0.2s;
+}
+
+.stat-card:hover {
+    transform: translateY(-5px);
+}
+
+.stat-card h3 { 
+    font-size: 1.4rem; 
+    margin-bottom: 5px; 
+}
+
+.stat-card h4 { 
+    font-size: 1.8rem; 
+    margin-bottom: 2px; 
+    font-weight: 700;
+}
+
+.stat-card p { 
+    font-size: 0.85rem; 
+    margin-bottom: 0; 
+    font-weight: 500;
+    text-transform: uppercase;
+    opacity: 0.9;
+}
+
+/* Cores dos Cards com Gradientes */
+.stat-ativo { background: linear-gradient(135deg, #28a745 0%, #34ce57 100%); }
+.stat-desistente { background: linear-gradient(135deg, #bd2130 0%, #dc3545 100%); }
 .stat-cultural { background: linear-gradient(135deg, var(--primary-color) 0%, #7b5ea3 100%); }
 .stat-profissional { background: linear-gradient(135deg, var(--secondary-color) 0%, #4a4a4a 100%); }
 .stat-bolsa { background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); }
-
-/* Cores para faixas etárias */
 .stat-crianca { background: linear-gradient(135deg, #2193b0 0%, #6dd5ed 100%); }
 .stat-adolescente { background: linear-gradient(135deg, #f2994a 0%, #f2c94c 100%); }
 .stat-adulto { background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%); }
@@ -103,4 +142,32 @@ body {
 .form-control:focus, .form-select:focus {
     border-color: var(--primary-color);
     box-shadow: 0 0 0 0.25rem rgba(166, 137, 189, 0.2);
+}
+
+.form-label {
+    font-weight: 600;
+    color: var(--dark-color);
+    font-size: 0.9rem;
+}
+
+/* Tabelas */
+.table {
+    vertical-align: middle;
+}
+
+.table thead th {
+    border-top: none;
+    text-transform: uppercase;
+    font-size: 0.8rem;
+    letter-spacing: 0.5px;
+    color: #6c757d;
+}
+
+/* Utilitários de Texto */
+.text-primary {
+    color: var(--primary-color) !important;
+}
+
+.border-end {
+    border-right: 1px solid #dee2e6 !important;
 }

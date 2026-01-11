@@ -25,43 +25,29 @@
                         <p class="badge {{ 'bg-danger' if aluno.desistencia == 'SIM' else 'bg-success' }} fs-6">
                             Status: {{ 'DESISTENTE' if aluno.desistencia == 'SIM' else 'ATIVO' }}
                         </p>
-                        <div class="mt-2 text-muted small">
-                            Cadastrado em: {{ aluno.data_cadastro.strftime('%d/%m/%Y %H:%M') }}
-                        </div>
                     </div>
 
                     <div class="col-md-8">
                         <h5 class="border-bottom pb-2 mb-3 text-primary"><i class="bi bi-person-vcard"></i> Dados Pessoais</h5>
                         <div class="row">
-                            <div class="col-md-6 mb-3"><h6 class="text-muted small">CPF</h6><p class="fw-bold">{{ aluno.cpf if aluno.cpf else 'Não informado' }}</p></div>
-                            <div class="col-md-6 mb-3"><h6 class="text-muted small">Telefone</h6><p class="fw-bold">{{ aluno.telefone if aluno.telefone else 'Não informado' }}</p></div>
+                            <div class="col-md-6 mb-3"><h6 class="text-muted small">CPF</h6><p class="fw-bold">{{ aluno.cpf or 'Não informado' }}</p></div>
+                            <div class="col-md-6 mb-3"><h6 class="text-muted small">Telefone</h6><p class="fw-bold">{{ aluno.telefone or 'Não informado' }}</p></div>
                             <div class="col-md-6 mb-3"><h6 class="text-muted small">Nascimento</h6><p class="fw-bold">{{ format_date(aluno.data_nascimento) }} ({{ aluno.idade }} anos)</p></div>
                             <div class="col-md-6 mb-3"><h6 class="text-muted small">Pais/Responsáveis</h6><p class="fw-bold">{{ aluno.nome_pais }}</p></div>
                             <div class="col-md-12 mb-3"><h6 class="text-muted small">Endereço</h6><p class="fw-bold">{{ aluno.endereco }}</p></div>
                         </div>
 
-                        <h5 class="border-bottom pb-2 mb-3 mt-3 text-primary"><i class="bi bi-book"></i> Informações Acadêmicas</h5>
-                        <div class="row">
-                            <div class="col-md-6 mb-3"><h6 class="text-muted small">Curso</h6><p class="fw-bold">{{ aluno.curso }}</p></div>
-                            <div class="col-md-6 mb-3"><h6 class="text-muted small">Setor</h6><p class="fw-bold">{{ aluno.setor }}</p></div>
-                            <div class="col-md-12 mb-3"><h6 class="text-muted small">Escola</h6><p class="fw-bold">{{ aluno.escola }}</p></div>
-                        </div>
-
-                        <h5 class="border-bottom pb-2 mb-3 mt-3 text-primary"><i class="bi bi-house-heart"></i> Socioeconômico</h5>
+                        <h5 class="border-bottom pb-2 mb-3 mt-3 text-primary"><i class="bi bi-house-heart"></i> Socioeconômico e Trabalho</h5>
                         <div class="row">
                             <div class="col-md-4 mb-3"><h6 class="text-muted small">Renda Familiar</h6><p class="fw-bold text-success">{{ format_currency(aluno.renda_familiar) }}</p></div>
                             <div class="col-md-4 mb-3"><h6 class="text-muted small">Bolsa Família</h6><p class="fw-bold">{{ format_boolean(aluno.bolsa_familia) }}</p></div>
-                            <div class="col-md-4 mb-3"><h6 class="text-muted small">Irmãos</h6><p class="fw-bold">{{ aluno.irmaos }}</p></div>
-                            <div class="col-md-4 mb-3"><h6 class="text-muted small">Pessoas na Casa</h6><p class="fw-bold">{{ aluno.pessoas_residencia }}</p></div>
-                            <div class="col-md-4 mb-3"><h6 class="text-muted small">Trabalha (Ficha Adulto)</h6><p class="fw-bold">{{ format_boolean(aluno.trabalho_ficha_adulto) }}</p></div>
-                            <div class="col-md-4 mb-3"><h6 class="text-muted small">Profissão/Trabalho</h6><p class="fw-bold">{{ aluno.nome_trabalho_profissao if aluno.nome_trabalho_profissao else '---' }}</p></div>
+                            <div class="col-md-4 mb-3"><h6 class="text-muted small">Trabalha?</h6><p class="fw-bold">{{ format_boolean(aluno.trabalho_ficha_adulto) }}</p></div>
+                            <div class="col-md-12 mb-3"><h6 class="text-muted small">Profissão/Local de Trabalho</h6><p class="fw-bold">{{ aluno.nome_trabalho_profissao or '---' }}</p></div>
                         </div>
 
                         {% if aluno.observacao %}
-                        <h5 class="border-bottom pb-2 mb-3 mt-3 text-primary"><i class="bi bi-chat-left-text"></i> Observações</h5>
-                        <div class="p-3 bg-light rounded border">
-                            {{ aluno.observacao }}
-                        </div>
+                        <h5 class="border-bottom pb-2 mb-3 mt-3 text-primary">Observações</h5>
+                        <div class="p-3 bg-light rounded border">{{ aluno.observacao }}</div>
                         {% endif %}
                     </div>
                 </div>

@@ -1,22 +1,60 @@
 {% extends "base.html" %}
 
 {% block content %}
-<div class="row mb-4">
-    <div class="col-md-4">
+<div class="row mb-3">
+    <div class="col-md-3">
+        <div class="stat-card stat-ativo">
+            <h3><i class="bi bi-person-check-fill"></i></h3>
+            <h4>{{ ativos }}</h4>
+            <p>Alunos Ativos</p>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="stat-card stat-desistente">
+            <h3><i class="bi bi-person-x-fill"></i></h3>
+            <h4>{{ desistentes }}</h4>
+            <p>Desistentes</p>
+        </div>
+    </div>
+    <div class="col-md-3">
         <div class="stat-card stat-cultural">
             <h3><i class="bi bi-music-note-beamed"></i></h3>
             <h4>{{ cultural }}</h4>
-            <p>Alunos Cultural</p>
+            <p>Setor Cultural</p>
         </div>
     </div>
-    <div class="col-md-4">
+    <div class="col-md-3">
         <div class="stat-card stat-profissional">
             <h3><i class="bi bi-briefcase-fill"></i></h3>
             <h4>{{ profissionalizante }}</h4>
-            <p>Alunos Profissionalizante</p>
+            <p>Profissionalizante</p>
         </div>
     </div>
-    <div class="col-md-4">
+</div>
+
+<div class="row mb-4">
+    <div class="col-md-3">
+        <div class="stat-card stat-crianca">
+            <h3><i class="bi bi-person-video"></i></h3> 
+            <h4>{{ criancas }}</h4>
+            <p>Crianças (até 11)</p>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="stat-card stat-adolescente">
+            <h3><i class="bi bi-person-video"></i></h3>
+            <h4>{{ adolescentes }}</h4>
+            <p>Jovens (12 a 17)</p>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="stat-card stat-adulto">
+            <h3><i class="bi bi-person-workspace"></i></h3>
+            <h4>{{ adultos }}</h4>
+            <p>Adultos (18+)</p>
+        </div>
+    </div>
+    <div class="col-md-3">
         <div class="stat-card stat-bolsa">
             <h3><i class="bi bi-cash-coin"></i></h3>
             <h4>{{ bolsa_familia }}</h4>
@@ -25,39 +63,14 @@
     </div>
 </div>
 
-<div class="row mb-4">
-    <div class="col-md-4">
-        <div class="stat-card stat-crianca">
-            <h3><i class="bi bi-person-video"></i></h3> 
-            <h4>{{ criancas }}</h4>
-            <p>Crianças (até 11 anos)</p>
-        </div>
-    </div>
-    <div class="col-md-4">
-        <div class="stat-card stat-adolescente">
-            <h3><i class="bi bi-person-video"></i></h3>
-            <h4>{{ adolescentes }}</h4>
-            <p>Adolescentes (12 a 17 anos)</p>
-        </div>
-    </div>
-    <div class="col-md-4">
-        <div class="stat-card stat-adulto">
-            <h3><i class="bi bi-person-workspace"></i></h3>
-            <h4>{{ adultos }}</h4>
-            <p>Adultos (18+ anos)</p>
-        </div>
-    </div>
-</div>
-
-<div class="card">
+<div class="card shadow">
     <div class="card-header d-flex justify-content-between align-items-center">
         <h4 class="mb-0"><i class="bi bi-list-ul"></i> Lista de Alunos ({{ total_alunos }})</h4>
-        <a href="{{ url_for('cadastrar') }}" class="btn btn-light">
+        <a href="{{ url_for('cadastrar') }}" class="btn btn-light btn-sm">
             <i class="bi bi-plus-circle"></i> Novo Aluno
         </a>
     </div>
     <div class="card-body">
-        
         <form method="GET" action="{{ url_for('index') }}" class="mb-4">
             <div class="input-group">
                 <span class="input-group-text bg-white border-end-0">
@@ -76,7 +89,7 @@
 
         {% if alunos %}
         <div class="table-responsive">
-            <table class="table table-hover">
+            <table class="table table-hover align-middle">
                 <thead>
                     <tr>
                         <th>Foto</th>
@@ -84,8 +97,7 @@
                         <th>Idade</th>
                         <th>Curso</th>
                         <th>Setor</th>
-                        <th>Escola</th>
-                        <th>Ações</th>
+                        <th class="text-center">Ações</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -93,30 +105,25 @@
                     <tr>
                         <td>
                             {% if aluno.foto %}
-                            <img src="{{ url_for('uploaded_file', filename=aluno.foto) }}" 
-                                 class="aluno-foto" 
-                                 alt="{{ aluno.nome_completo }}">
+                            <img src="{{ url_for('uploaded_file', filename=aluno.foto) }}" class="aluno-foto" style="width: 50px; height: 50px;">
                             {% else %}
-                            <div class="aluno-foto bg-secondary d-flex align-items-center justify-content-center">
-                                <i class="bi bi-person-fill text-white" style="font-size: 2rem;"></i>
+                            <div class="aluno-foto bg-secondary d-flex align-items-center justify-content-center" style="width: 50px; height: 50px;">
+                                <i class="bi bi-person text-white"></i>
                             </div>
                             {% endif %}
                         </td>
-                        <td>{{ aluno.nome_completo }}</td>
+                        <td class="fw-bold">{{ aluno.nome_completo }}</td>
                         <td>{{ aluno.idade }} anos</td>
                         <td>{{ aluno.curso }}</td>
                         <td>
-                            {% if aluno.setor == 'CULTURAL' %}
-                            <span class="badge bg-primary">Cultural</span>
-                            {% else %}
-                            <span class="badge bg-success">Profissionalizante</span>
-                            {% endif %}
+                            <span class="badge {{ 'bg-primary' if aluno.setor == 'CULTURAL' else 'bg-success' }}">
+                                {{ aluno.setor }}
+                            </span>
                         </td>
-                        <td>{{ aluno.escola }}</td>
-                        <td>
+                        <td class="text-center">
                             <div class="btn-group" role="group">
                                 <a href="{{ url_for('visualizar', id=aluno.id) }}" 
-                                   class="btn btn-sm btn-info" title="Visualizar">
+                                   class="btn btn-sm btn-info text-white" title="Visualizar">
                                     <i class="bi bi-eye"></i>
                                 </a>
                                 <a href="{{ url_for('editar', id=aluno.id) }}" 
@@ -126,7 +133,7 @@
                                 <form action="{{ url_for('excluir', id=aluno.id) }}" 
                                       method="POST" 
                                       class="d-inline"
-                                      onsubmit="return confirm('Tem certeza que deseja excluir este aluno?');">
+                                      onsubmit="return confirm('Tem certeza que deseja excluir permanentemente este aluno?');">
                                     <button type="submit" class="btn btn-sm btn-danger" title="Excluir">
                                         <i class="bi bi-trash"></i>
                                     </button>
@@ -139,16 +146,9 @@
             </table>
         </div>
         {% else %}
-        <div class="text-center py-5">
-            {% if termo_busca %}
-            <i class="bi bi-search display-1 text-muted"></i>
-            <h3 class="text-muted mt-3">Nenhum resultado para "{{ termo_busca }}"</h3>
-            <a href="{{ url_for('index') }}" class="btn btn-link">Ver todos os alunos</a>
-            {% else %}
-            <i class="bi bi-people display-1 text-muted"></i>
-            <h3 class="text-muted mt-3">Nenhum aluno cadastrado</h3>
-            <p class="text-muted">Clique no botão "Novo Aluno" para começar</p>
-            {% endif %}
+        <div class="text-center py-5 text-muted">
+            <i class="bi bi-people display-4"></i>
+            <p class="mt-2">Nenhum aluno encontrado.</p>
         </div>
         {% endif %}
     </div>
