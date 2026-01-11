@@ -180,16 +180,21 @@ def uploaded_file(filename):
 
 @app.context_processor
 def utility_processor():
-    def format_currency(value): return f"R$ {value:,.2f}".replace('.', ',')
-    def format_date(value): return value.strftime('%d/%m/%Y') if value else ""
-    return dict(format_currency=format_currency, format_date=format_date, now=datetime.now())
-
-with app.app_context():
-    db.create_all()
-    if not Usuario.query.filter_by(username='admin').first():
-        admin = Usuario(username='admin', password=generate_password_hash('1234'))
-        db.session.add(admin)
-        db.session.commit()
+    def format_currency(value): 
+        return f"R$ {value:,.2f}".replace('.', ',') if value is not None else "R$ 0,00"
+    
+    def format_date(value): 
+        return value.strftime('%d/%m/%Y') if value else ""
+    
+    def format_boolean(value):
+        return "SIM" if value else "NÃO"
+        
+    return dict(
+        format_currency=format_currency, 
+        format_date=format_date, 
+        format_boolean=format_boolean,
+        now=datetime.now()
+    )
 
 if __name__ == '__main__':
     app.run(debug=True)

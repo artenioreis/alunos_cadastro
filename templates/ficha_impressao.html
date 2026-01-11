@@ -5,154 +5,160 @@
     <title>Ficha de Cadastro - {{ aluno.nome_completo }}</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <style>
-        /* Configurações para impressão */
         @media print { 
             .no-print { display: none !important; } 
-            body { padding: 0; margin: 0; background-color: white !important; }
-            .container { width: 100%; max-width: none; }
-            .card { border: none !important; }
+            body { background-color: white !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+            .container { width: 100% !important; max-width: none !important; margin: 0 !important; padding: 0 !important; }
         }
         
-        body { background-color: white; font-family: 'Segoe UI', Tahoma, Geneva, sans-serif; color: #333; }
-        .ficha-header { border-bottom: 3px solid #a689bd; padding-bottom: 15px; margin-bottom: 20px; }
-        .logo-print { max-height: 80px; }
-        .aluno-foto-print { width: 130px; height: 150px; object-fit: cover; border: 2px solid #ddd; border-radius: 4px; }
+        body { font-family: 'Segoe UI', Arial, sans-serif; color: #000; line-height: 1.4; }
+        .ficha-border { border: 2px solid #a689bd; padding: 20px; border-radius: 10px; }
+        .ficha-header { border-bottom: 3px solid #a689bd; margin-bottom: 20px; padding-bottom: 10px; }
+        .logo-print { max-height: 70px; }
         
-        /* Estilização dos campos */
-        .label-field { font-weight: bold; color: #555; font-size: 0.75rem; text-transform: uppercase; margin-bottom: 1px; }
-        .value-field { border-bottom: 1px solid #eee; padding-bottom: 3px; margin-bottom: 12px; font-size: 0.95rem; min-height: 24px; color: #000; }
-        .section-title { background-color: #f8f9fa; padding: 6px 12px; font-weight: bold; border-left: 5px solid #a689bd; margin: 15px 0 10px 0; font-size: 0.85rem; text-transform: uppercase; }
+        /* Estilização para garantir que apareça na impressão */
+        .section-title { 
+            background-color: #f0f0f0 !important; 
+            border-left: 6px solid #a689bd !important;
+            padding: 5px 12px;
+            font-weight: bold;
+            margin: 15px 0 10px 0;
+            text-transform: uppercase;
+            font-size: 0.85rem;
+        }
+
+        .label-field { font-size: 0.7rem; color: #555; font-weight: bold; text-transform: uppercase; margin-bottom: 0; }
+        .value-field { border-bottom: 1px solid #ccc; font-size: 1rem; padding: 2px 0 5px 0; margin-bottom: 10px; min-height: 28px; }
         
-        /* Caixas de texto e assinaturas */
-        .box-text { border: 1px solid #ddd; padding: 10px; min-height: 80px; font-size: 0.9rem; border-radius: 4px; }
-        .declaracao-box { border: 2px solid #a689bd; padding: 15px; margin: 20px 0; background-color: #fcfaff; border-radius: 8px; }
-        .assinatura-area { border-top: 1px solid #000; margin-top: 40px; padding-top: 5px; text-align: center; font-size: 0.8rem; }
+        .aluno-foto-print { 
+            width: 140px; height: 160px; object-fit: cover; 
+            border: 2px solid #a689bd; border-radius: 5px; 
+        }
+
+        .box-obs { border: 1px solid #ccc; padding: 10px; min-height: 60px; font-size: 0.9rem; border-radius: 5px; }
+        .declaracao { border: 2px solid #a689bd; padding: 10px; margin-top: 20px; font-size: 0.8rem; text-align: center; background-color: #fafafa !important; }
+        .assinatura { border-top: 1px solid #000; margin-top: 40px; text-align: center; font-size: 0.75rem; padding-top: 5px; }
     </style>
 </head>
 <body onload="window.print()">
-    <div class="container my-4">
-        <div class="ficha-header d-flex justify-content-between align-items-center">
-            <img src="{{ url_for('static', filename='images/cropped-sociedade_da_redencao_logotipo_retangular01_cor.png') }}" class="logo-print">
-            <div class="text-end">
-                <h2 class="mb-0 fw-bold" style="color: #a689bd;">FICHA DE CADASTRO</h2>
-                <p class="mb-0 text-muted small">ID: #{{ aluno.id }} | Inscrito em: {{ aluno.data_cadastro.strftime('%d/%m/%Y %H:%M') }}</p>
-            </div>
-        </div>
-
-        <div class="row">
-            <div class="col-3 text-center">
-                {% if aluno.foto %}
-                    <img src="{{ url_for('uploaded_file', filename=aluno.foto) }}" class="aluno-foto-print shadow-sm">
-                {% else %}
-                    <div class="aluno-foto-print bg-light d-flex align-items-center justify-content-center border shadow-sm">
-                        <span class="text-muted small">SEM FOTO</span>
-                    </div>
-                {% endif %}
-                <div class="mt-2 badge {{ 'bg-danger' if aluno.desistencia == 'SIM' else 'bg-success' }} w-100">
-                    STATUS: {{ 'DESISTENTE' if aluno.desistencia == 'SIM' else 'ATIVO' }}
+    <div class="container my-3">
+        <div class="ficha-border">
+            <div class="ficha-header d-flex justify-content-between align-items-center">
+                <img src="{{ url_for('static', filename='images/cropped-sociedade_da_redencao_logotipo_retangular01_cor.png') }}" class="logo-print">
+                <div class="text-end">
+                    <h3 class="mb-0 fw-bold" style="color: #a689bd;">FICHA DE ALUNO</h3>
+                    <p class="mb-0 small text-muted">ID: #{{ aluno.id }} | Cadastro: {{ aluno.data_cadastro.strftime('%d/%m/%Y') }}</p>
                 </div>
             </div>
-            
-            <div class="col-9">
-                <div class="row">
-                    <div class="col-12">
-                        <div class="label-field">Nome Completo</div>
-                        <div class="value-field fw-bold">{{ aluno.nome_completo }}</div>
+
+            <div class="row">
+                <div class="col-3 text-center border-end">
+                    {% if aluno.foto %}
+                        <img src="{{ url_for('uploaded_file', filename=aluno.foto) }}" class="aluno-foto-print shadow-sm">
+                    {% else %}
+                        <div class="aluno-foto-print bg-light d-flex align-items-center justify-content-center border">
+                            <small class="text-muted">SEM FOTO</small>
+                        </div>
+                    {% endif %}
+                    <div class="mt-3 p-1 border fw-bold small {{ 'text-danger' if aluno.desistencia == 'SIM' else 'text-success' }}">
+                        STATUS: {{ 'DESISTENTE' if aluno.desistencia == 'SIM' else 'ATIVO' }}
                     </div>
-                    <div class="col-4">
-                        <div class="label-field">CPF</div>
-                        <div class="value-field">{{ aluno.cpf if aluno.cpf else '---' }}</div>
-                    </div>
-                    <div class="col-4">
-                        <div class="label-field">Telefone</div>
-                        <div class="value-field">{{ aluno.telefone if aluno.telefone else '---' }}</div>
-                    </div>
-                    <div class="col-4">
-                        <div class="label-field">Data de Nascimento</div>
-                        <div class="value-field">{{ format_date(aluno.data_nascimento) }} ({{ aluno.idade }} anos)</div>
-                    </div>
-                    <div class="col-12">
-                        <div class="label-field">Pais ou Responsáveis</div>
-                        <div class="value-field">{{ aluno.nome_pais }}</div>
-                    </div>
-                    <div class="col-12">
-                        <div class="label-field">Endereço Residencial</div>
-                        <div class="value-field">{{ aluno.endereco }}</div>
+                </div>
+
+                <div class="col-9">
+                    <div class="row">
+                        <div class="col-12">
+                            <div class="label-field">Nome Completo</div>
+                            <div class="value-field fw-bold">{{ aluno.nome_completo }}</div>
+                        </div>
+                        <div class="col-6">
+                            <div class="label-field">CPF</div>
+                            <div class="value-field">{{ aluno.cpf or '---' }}</div>
+                        </div>
+                        <div class="col-6">
+                            <div class="label-field">Telefone</div>
+                            <div class="value-field">{{ aluno.telefone or '---' }}</div>
+                        </div>
+                        <div class="col-6">
+                            <div class="label-field">Nascimento (Idade)</div>
+                            <div class="value-field">{{ format_date(aluno.data_nascimento) }} ({{ aluno.idade }} anos)</div>
+                        </div>
+                        <div class="col-6">
+                            <div class="label-field">Responsáveis</div>
+                            <div class="value-field">{{ aluno.nome_pais }}</div>
+                        </div>
+                        <div class="col-12">
+                            <div class="label-field">Endereço</div>
+                            <div class="value-field">{{ aluno.endereco }}</div>
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
 
-        <div class="section-title">Informações Acadêmicas</div>
-        <div class="row">
-            <div class="col-4">
-                <div class="label-field">Curso</div>
-                <div class="value-field">{{ aluno.curso }}</div>
+            <div class="section-title">Informações Acadêmicas</div>
+            <div class="row">
+                <div class="col-4">
+                    <div class="label-field">Curso</div>
+                    <div class="value-field">{{ aluno.curso }}</div>
+                </div>
+                <div class="col-4">
+                    <div class="label-field">Setor</div>
+                    <div class="value-field">{{ aluno.setor }}</div>
+                </div>
+                <div class="col-4">
+                    <div class="label-field">Escola</div>
+                    <div class="value-field">{{ aluno.escola }}</div>
+                </div>
             </div>
-            <div class="col-4">
-                <div class="label-field">Setor</div>
-                <div class="value-field">{{ aluno.setor }}</div>
-            </div>
-            <div class="col-4">
-                <div class="label-field">Escola</div>
-                <div class="value-field">{{ aluno.escola }}</div>
-            </div>
-        </div>
 
-        <div class="section-title">Situação Socioeconômica</div>
-        <div class="row">
-            <div class="col-3">
-                <div class="label-field">Renda Familiar</div>
-                <div class="value-field">{{ format_currency(aluno.renda_familiar) }}</div>
+            <div class="section-title">Dados Socioeconômicos</div>
+            <div class="row">
+                <div class="col-3">
+                    <div class="label-field">Renda Familiar</div>
+                    <div class="value-field">{{ format_currency(aluno.renda_familiar) }}</div>
+                </div>
+                <div class="col-3">
+                    <div class="label-field">Bolsa Família</div>
+                    <div class="value-field">{{ format_boolean(aluno.bolsa_familia) }}</div>
+                </div>
+                <div class="col-3">
+                    <div class="label-field">Irmãos</div>
+                    <div class="value-field">{{ aluno.irmaos }}</div>
+                </div>
+                <div class="col-3">
+                    <div class="label-field">Pessoas na Casa</div>
+                    <div class="value-field">{{ aluno.pessoas_residencia }}</div>
+                </div>
+                <div class="col-4">
+                    <div class="label-field">Trabalha (Ficha Adulto)</div>
+                    <div class="value-field">{{ format_boolean(aluno.trabalho_ficha_adulto) }}</div>
+                </div>
+                <div class="col-8">
+                    <div class="label-field">Profissão / Trabalho</div>
+                    <div class="value-field">{{ aluno.nome_trabalho_profissao or '---' }}</div>
+                </div>
             </div>
-            <div class="col-3">
-                <div class="label-field">Bolsa Família</div>
-                <div class="value-field">{{ 'SIM' if aluno.bolsa_familia else 'NÃO' }}</div>
-            </div>
-            <div class="col-3">
-                <div class="label-field">Qtd. de Irmãos</div>
-                <div class="value-field">{{ aluno.irmaos }}</div>
-            </div>
-            <div class="col-3">
-                <div class="label-field">Pessoas na Residência</div>
-                <div class="value-field">{{ aluno.pessoas_residencia }}</div>
-            </div>
-            <div class="col-4">
-                <div class="label-field">Trabalha (Ficha Adulto)</div>
-                <div class="value-field">{{ 'SIM' if aluno.trabalho_ficha_adulto else 'NÃO' }}</div>
-            </div>
-            <div class="col-8">
-                <div class="label-field">Nome do Trabalho / Profissão</div>
-                <div class="value-field">{{ aluno.nome_trabalho_profissao if aluno.nome_trabalho_profissao else '---' }}</div>
-            </div>
-        </div>
 
-        <div class="section-title">Observações</div>
-        <div class="box-text">
-            {{ aluno.observacao if aluno.observacao else 'Nenhuma observação registrada.' }}
-        </div>
-
-        <div class="declaracao-box text-center">
-            <h6 class="fw-bold mb-2">DECLARAÇÃO DE DIVULGAÇÃO DE VÍDEO E IMAGEM</h6>
-            <p class="mb-0" style="font-size: 0.85rem; line-height: 1.4;">
-                EU DECLARO PARA OS DEVIDOS FINS QUE PERMITO O USO DE MINHA IMAGEM COM O OBJETIVO DE DIVULGAÇÃO DO PROJETO 
-                "EM DEFESA DA VIDA", COORDENADO PELA SOCIEDADE DA REDENÇÃO-FORTALEZA.
-            </p>
-        </div>
-
-        <div class="row mt-5">
-            <div class="col-6">
-                <div class="assinatura-area">Assinatura do Aluno ou Responsável</div>
+            <div class="section-title">Observações</div>
+            <div class="box-obs">
+                {{ aluno.observacao or 'Nenhuma observação registrada.' }}
             </div>
-            <div class="col-6">
-                <div class="assinatura-area">Coordenação - Sociedade da Redenção</div>
+
+            <div class="declaracao">
+                <strong>DECLARAÇÃO DE DIVULGAÇÃO DE VÍDEO E IMAGEM</strong><br>
+                EU DECLARO QUE PERMITO O USO DE MINHA IMAGEM PARA DIVULGAÇÃO DO PROJETO "EM DEFESA DA VIDA", 
+                COORDENADO PELA SOCIEDADE DA REDENÇÃO-FORTALEZA.
+            </div>
+
+            <div class="row mt-4">
+                <div class="col-6"><div class="assinatura">Assinatura do Aluno/Responsável</div></div>
+                <div class="col-6"><div class="assinatura">Coordenação - Sociedade da Redenção</div></div>
             </div>
         </div>
 
-        <div class="text-center mt-5 no-print">
-            <hr>
-            <button onclick="window.print()" class="btn btn-primary btn-lg px-5">Imprimir Ficha</button>
-            <a href="{{ url_for('visualizar', id=aluno.id) }}" class="btn btn-secondary btn-lg ms-2">Voltar</a>
+        <div class="text-center mt-4 no-print">
+            <button onclick="window.print()" class="btn btn-primary btn-lg px-5">Imprimir</button>
+            <a href="{{ url_for('visualizar', id=aluno.id) }}" class="btn btn-secondary btn-lg">Voltar</a>
         </div>
     </div>
 </body>
