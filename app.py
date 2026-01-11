@@ -192,8 +192,7 @@ def utility_processor():
     return dict(
         format_currency=format_currency, 
         format_date=format_date, 
-        format_boolean=format_boolean,
-        now=datetime.now()
+        format_boolean=format_boolean
     )
 
 if __name__ == '__main__':

@@ -2,7 +2,7 @@
 {% block content %}
 <div class="row justify-content-center">
     <div class="col-lg-10">
-        <div class="card">
+        <div class="card shadow">
             <div class="card-header d-flex justify-content-between align-items-center">
                 <h4 class="mb-0"><i class="bi bi-person-badge"></i> Detalhes do Aluno</h4>
                 <div class="btn-group">
@@ -13,26 +13,56 @@
             </div>
             <div class="card-body">
                 <div class="row">
-                    <div class="col-md-4 text-center mb-4">
-                        {% if aluno.foto %}<img src="{{ url_for('uploaded_file', filename=aluno.foto) }}" class="aluno-foto mb-3" style="width: 250px; height: 250px;">
-                        {% else %}<div class="aluno-foto bg-secondary d-flex align-items-center justify-content-center mx-auto mb-3" style="width: 250px; height: 250px;"><i class="bi bi-person-fill text-white" style="font-size: 4rem;"></i></div>{% endif %}
-                        <h4>{{ aluno.nome_completo }}</h4>
-                        <p class="badge {{ 'bg-danger' if aluno.desistencia == 'SIM' else 'bg-success' }}">Status: {{ 'DESISTENTE' if aluno.desistencia == 'SIM' else 'ATIVO' }}</p>
+                    <div class="col-md-4 text-center mb-4 border-end">
+                        {% if aluno.foto %}
+                            <img src="{{ url_for('uploaded_file', filename=aluno.foto) }}" class="aluno-foto mb-3 shadow" style="width: 250px; height: 250px; border-radius: 15px; object-fit: cover;">
+                        {% else %}
+                            <div class="aluno-foto bg-secondary d-flex align-items-center justify-content-center mx-auto mb-3" style="width: 250px; height: 250px; border-radius: 15px;">
+                                <i class="bi bi-person-fill text-white" style="font-size: 5rem;"></i>
+                            </div>
+                        {% endif %}
+                        <h4 class="fw-bold">{{ aluno.nome_completo }}</h4>
+                        <p class="badge {{ 'bg-danger' if aluno.desistencia == 'SIM' else 'bg-success' }} fs-6">
+                            Status: {{ 'DESISTENTE' if aluno.desistencia == 'SIM' else 'ATIVO' }}
+                        </p>
+                        <div class="mt-2 text-muted small">
+                            Cadastrado em: {{ aluno.data_cadastro.strftime('%d/%m/%Y %H:%M') }}
+                        </div>
                     </div>
 
                     <div class="col-md-8">
+                        <h5 class="border-bottom pb-2 mb-3 text-primary"><i class="bi bi-person-vcard"></i> Dados Pessoais</h5>
                         <div class="row">
-                            <div class="col-md-6 mb-3"><h6 class="text-muted small">CPF</h6><p>{{ aluno.cpf if aluno.cpf else 'Não informado' }}</p></div>
-                            <div class="col-md-6 mb-3"><h6 class="text-muted small">Telefone</h6><p>{{ aluno.telefone if aluno.telefone else 'Não informado' }}</p></div>
-                            <div class="col-md-6 mb-3"><h6 class="text-muted small">Nascimento</h6><p>{{ format_date(aluno.data_nascimento) }} ({{ aluno.idade }} anos)</p></div>
-                            <div class="col-md-6 mb-3"><h6 class="text-muted small">Pais/Responsáveis</h6><p>{{ aluno.nome_pais }}</p></div>
-                            <div class="col-md-6 mb-3"><h6 class="text-muted small">Curso / Setor</h6><p>{{ aluno.curso }} ({{ aluno.setor }})</p></div>
-                            <div class="col-md-6 mb-3"><h6 class="text-muted small">Escola</h6><p>{{ aluno.escola }}</p></div>
-                            <div class="col-md-12 mb-3"><h6 class="text-muted small">Endereço</h6><p>{{ aluno.endereco }}</p></div>
-                            <div class="col-md-4 mb-3"><h6 class="text-muted small">Renda</h6><p>{{ format_currency(aluno.renda_familiar) }}</p></div>
-                            <div class="col-md-4 mb-3"><h6 class="text-muted small">Bolsa Família</h6><p>{{ 'Sim' if aluno.bolsa_familia else 'Não' }}</p></div>
-                            <div class="col-md-4 mb-3"><h6 class="text-muted small">Inscrição</h6><p>{{ aluno.data_cadastro.strftime('%d/%m/%Y %H:%M') }}</p></div>
+                            <div class="col-md-6 mb-3"><h6 class="text-muted small">CPF</h6><p class="fw-bold">{{ aluno.cpf if aluno.cpf else 'Não informado' }}</p></div>
+                            <div class="col-md-6 mb-3"><h6 class="text-muted small">Telefone</h6><p class="fw-bold">{{ aluno.telefone if aluno.telefone else 'Não informado' }}</p></div>
+                            <div class="col-md-6 mb-3"><h6 class="text-muted small">Nascimento</h6><p class="fw-bold">{{ format_date(aluno.data_nascimento) }} ({{ aluno.idade }} anos)</p></div>
+                            <div class="col-md-6 mb-3"><h6 class="text-muted small">Pais/Responsáveis</h6><p class="fw-bold">{{ aluno.nome_pais }}</p></div>
+                            <div class="col-md-12 mb-3"><h6 class="text-muted small">Endereço</h6><p class="fw-bold">{{ aluno.endereco }}</p></div>
                         </div>
+
+                        <h5 class="border-bottom pb-2 mb-3 mt-3 text-primary"><i class="bi bi-book"></i> Informações Acadêmicas</h5>
+                        <div class="row">
+                            <div class="col-md-6 mb-3"><h6 class="text-muted small">Curso</h6><p class="fw-bold">{{ aluno.curso }}</p></div>
+                            <div class="col-md-6 mb-3"><h6 class="text-muted small">Setor</h6><p class="fw-bold">{{ aluno.setor }}</p></div>
+                            <div class="col-md-12 mb-3"><h6 class="text-muted small">Escola</h6><p class="fw-bold">{{ aluno.escola }}</p></div>
+                        </div>
+
+                        <h5 class="border-bottom pb-2 mb-3 mt-3 text-primary"><i class="bi bi-house-heart"></i> Socioeconômico</h5>
+                        <div class="row">
+                            <div class="col-md-4 mb-3"><h6 class="text-muted small">Renda Familiar</h6><p class="fw-bold text-success">{{ format_currency(aluno.renda_familiar) }}</p></div>
+                            <div class="col-md-4 mb-3"><h6 class="text-muted small">Bolsa Família</h6><p class="fw-bold">{{ format_boolean(aluno.bolsa_familia) }}</p></div>
+                            <div class="col-md-4 mb-3"><h6 class="text-muted small">Irmãos</h6><p class="fw-bold">{{ aluno.irmaos }}</p></div>
+                            <div class="col-md-4 mb-3"><h6 class="text-muted small">Pessoas na Casa</h6><p class="fw-bold">{{ aluno.pessoas_residencia }}</p></div>
+                            <div class="col-md-4 mb-3"><h6 class="text-muted small">Trabalha (Ficha Adulto)</h6><p class="fw-bold">{{ format_boolean(aluno.trabalho_ficha_adulto) }}</p></div>
+                            <div class="col-md-4 mb-3"><h6 class="text-muted small">Profissão/Trabalho</h6><p class="fw-bold">{{ aluno.nome_trabalho_profissao if aluno.nome_trabalho_profissao else '---' }}</p></div>
+                        </div>
+
+                        {% if aluno.observacao %}
+                        <h5 class="border-bottom pb-2 mb-3 mt-3 text-primary"><i class="bi bi-chat-left-text"></i> Observações</h5>
+                        <div class="p-3 bg-light rounded border">
+                            {{ aluno.observacao }}
+                        </div>
+                        {% endif %}
                     </div>
                 </div>
             </div>
