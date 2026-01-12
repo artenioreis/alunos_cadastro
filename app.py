@@ -213,4 +213,5 @@ def utility_processor():
     return dict(format_currency=format_currency, format_date=format_date, format_boolean=format_boolean, now=datetime.now())
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    # host='0.0.0.0' permite acesso de outros dispositivos na rede local
+    app.run(debug=True, host='0.0.0.0', port=5000)
