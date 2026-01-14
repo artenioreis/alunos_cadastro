@@ -251,5 +251,13 @@ def utility_processor():
         return "SIM" if value else "NÃO"
     return dict(format_currency=format_currency, format_date=format_date, format_boolean=format_boolean, now=datetime.now())
 
+import webbrowser
+from threading import Timer
+
+def open_browser():
+      webbrowser.open_new('http://127.0.0.1:5000/')
+
 if __name__ == '__main__':
-    app.run(debug=True, host='0.0.0.0', port=5000)
+    # Abre o navegador após 2 segundos
+    Timer(2, open_browser).start()
+    app.run(debug=False, host='0.0.0.0', port=5000)
