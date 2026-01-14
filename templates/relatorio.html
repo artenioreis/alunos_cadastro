@@ -1,0 +1,82 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="card shadow no-print">
+    <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+        <h4 class="mb-0"><i class="bi bi-file-earmark-bar-graph"></i> Relatório Geral de Alunos</h4>
+        <a href="{{ url_for('index') }}" class="btn btn-light btn-sm">Voltar ao Início</a>
+    </div>
+    <div class="card-body">
+        <form method="GET" action="{{ url_for('relatorio') }}" class="row g-3">
+            <div class="col-md-10">
+                <label class="form-label fw-bold">Filtrar por Categoria:</label>
+                <select name="filtro" class="form-select shadow-sm">
+                    <option value="TODOS" {% if filtro_atual == 'TODOS' %}selected{% endif %}>Todos os Alunos</option>
+                    <option value="ATIVOS" {% if filtro_atual == 'ATIVOS' %}selected{% endif %}>Alunos Ativos</option>
+                    <option value="DESISTENTES" {% if filtro_atual == 'DESISTENTES' %}selected{% endif %}>Desistentes</option>
+                    <option value="CULTURAL" {% if filtro_atual == 'CULTURAL' %}selected{% endif %}>Setor Cultural</option>
+                    <option value="PROFISSIONALIZANTE" {% if filtro_atual == 'PROFISSIONALIZANTE' %}selected{% endif %}>Setor Profissionalizante</option>
+                    <option value="CRIANCAS" {% if filtro_atual == 'CRIANCAS' %}selected{% endif %}>Crianças (até 11 anos)</option>
+                    <option value="JOVENS" {% if filtro_atual == 'JOVENS' %}selected{% endif %}>Jovens (12 a 17 anos)</option>
+                    <option value="ADULTOS" {% if filtro_atual == 'ADULTOS' %}selected{% endif %}>Adultos (18+ anos)</option>
+                    <option value="BOLSA_FAMILIA" {% if filtro_atual == 'BOLSA_FAMILIA' %}selected{% endif %}>Bolsa Família</option>
+                </select>
+            </div>
+            <div class="col-md-2 d-flex align-items-end">
+                <button type="submit" class="btn btn-primary w-100">
+                    <i class="bi bi-filter"></i> Filtrar
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div class="card shadow mt-4">
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table table-hover align-middle">
+                <thead class="table-light">
+                    <tr>
+                        <th>Nome Completo</th>
+                        <th>Idade</th>
+                        <th>Setor</th>
+                        <th>Status</th>
+                        <th class="text-center no-print">Ações</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for aluno in alunos %}
+                    <tr>
+                        <td class="fw-bold">{{ aluno.nome_completo }}</td>
+                        <td>{{ aluno.idade }} anos</td>
+                        <td>
+                            <span class="badge {{ 'bg-primary' if aluno.setor == 'CULTURAL' else 'bg-success' }}">
+                                {{ aluno.setor }}
+                            </span>
+                        </td>
+                        <td>
+                            <span class="badge {{ 'bg-danger' if aluno.desistencia == 'SIM' else 'bg-success' }}">
+                                {{ 'DESISTENTE' if aluno.desistencia == 'SIM' else 'ATIVO' }}
+                            </span>
+                        </td>
+                        <td class="text-center no-print">
+                            <a href="{{ url_for('imprimir', id=aluno.id) }}" target="_blank" class="btn btn-sm btn-outline-dark" title="Imprimir Ficha">
+                                <i class="bi bi-printer"></i>
+                            </a>
+                        </td>
+                    </tr>
+                    {% else %}
+                    <tr>
+                        <td colspan="5" class="text-center py-4 text-muted">Nenhum aluno encontrado para este filtro.</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<div class="mt-3 text-muted small no-print">
+    <i class="bi bi-info-circle"></i> O ícone da impressora abre a ficha de cadastro individual pronta para impressão.
+</div>
+{% endblock %}

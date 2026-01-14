@@ -16,10 +16,11 @@ app.config['UPLOAD_FOLDER'] = os.path.join(BASE_DIR, 'static', 'uploads')
 
 db.init_app(app)
 with app.app_context():
-    db.create_all() # Corrige o erro de tabela inexistente
+    db.create_all() 
 
 os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
 
+# Decorator para exigir login
 def login_required(f):
     @wraps(f)
     def decorated_function(*args, **kwargs):
@@ -28,6 +29,7 @@ def login_required(f):
         return f(*args, **kwargs)
     return decorated_function
 
+# Função auxiliar para salvar ficheiros
 def salvar_arquivo(file):
     if file and hasattr(file, 'filename') and file.filename != '':
         timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
@@ -57,40 +59,6 @@ def logout():
     session.clear()
     flash('Você saiu do sistema.', 'info')
     return redirect(url_for('login'))
-
-@app.route('/usuarios')
-@login_required
-def listar_usuarios():
-    usuarios = Usuario.query.order_by(Usuario.username).all()
-    return render_template('usuarios.html', usuarios=usuarios)
-
-@app.route('/registrar_usuario', methods=['GET', 'POST'])
-@login_required
-def registrar_usuario():
-    form = RegistroUsuarioForm()
-    if form.validate_on_submit():
-        if Usuario.query.filter_by(username=form.username.data).first():
-            flash('Este usuário já existe.', 'warning')
-        else:
-            hash_pw = generate_password_hash(form.password.data)
-            novo_user = Usuario(username=form.username.data, password=hash_pw)
-            db.session.add(novo_user)
-            db.session.commit()
-            flash(f'Usuário {novo_user.username} criado com sucesso!', 'success')
-            return redirect(url_for('listar_usuarios'))
-    return render_template('registrar_usuario.html', form=form)
-
-@app.route('/excluir_usuario/<int:id>', methods=['POST'])
-@login_required
-def excluir_usuario(id):
-    if id == session.get('user_id'):
-        flash('Você não pode excluir o usuário que está usando no momento.', 'danger')
-        return redirect(url_for('listar_usuarios'))
-    user = Usuario.query.get_or_404(id)
-    db.session.delete(user)
-    db.session.commit()
-    flash('Usuário removido com sucesso!', 'success')
-    return redirect(url_for('listar_usuarios'))
 
 @app.route('/')
 @login_required
@@ -122,6 +90,33 @@ def index():
                            desistentes=desistentes,
                            total_alunos=len(alunos), 
                            termo_busca=termo_busca)
+
+@app.route('/relatorio')
+@login_required
+def relatorio():
+    filtro = request.args.get('filtro', 'TODOS')
+    query = Aluno.query
+
+    if filtro == 'ATIVOS':
+        alunos = query.filter_by(desistencia='NÃO').order_by(Aluno.nome_completo).all()
+    elif filtro == 'DESISTENTES':
+        alunos = query.filter_by(desistencia='SIM').order_by(Aluno.nome_completo).all()
+    elif filtro == 'CULTURAL':
+        alunos = query.filter_by(setor='CULTURAL').order_by(Aluno.nome_completo).all()
+    elif filtro == 'PROFISSIONALIZANTE':
+        alunos = query.filter_by(setor='PROFISSIONALIZANTE').order_by(Aluno.nome_completo).all()
+    elif filtro == 'CRIANCAS':
+        alunos = query.filter(Aluno.idade < 12).order_by(Aluno.nome_completo).all()
+    elif filtro == 'JOVENS':
+        alunos = query.filter(Aluno.idade >= 12, Aluno.idade < 18).order_by(Aluno.nome_completo).all()
+    elif filtro == 'ADULTOS':
+        alunos = query.filter(Aluno.idade >= 18).order_by(Aluno.nome_completo).all()
+    elif filtro == 'BOLSA_FAMILIA':
+        alunos = query.filter_by(bolsa_familia=True).order_by(Aluno.nome_completo).all()
+    else:
+        alunos = query.order_by(Aluno.nome_completo).all()
+
+    return render_template('relatorio.html', alunos=alunos, filtro_atual=filtro)
 
 @app.route('/cadastrar', methods=['GET', 'POST'])
 @login_required
@@ -173,6 +168,18 @@ def editar(id):
         return redirect(url_for('index'))
     return render_template('editar.html', form=form, aluno=aluno)
 
+@app.route('/visualizar/<int:id>')
+@login_required
+def visualizar(id):
+    aluno = Aluno.query.get_or_404(id)
+    return render_template('visualizar.html', aluno=aluno)
+
+@app.route('/imprimir/<int:id>')
+@login_required
+def imprimir(id):
+    aluno = Aluno.query.get_or_404(id)
+    return render_template('ficha_impressao.html', aluno=aluno)
+
 @app.route('/excluir/<int:id>', methods=['POST'])
 @login_required
 def excluir(id):
@@ -186,17 +193,39 @@ def excluir(id):
     flash('Aluno excluído com sucesso!', 'success')
     return redirect(url_for('index'))
 
-@app.route('/visualizar/<int:id>')
+@app.route('/usuarios')
 @login_required
-def visualizar(id):
-    aluno = Aluno.query.get_or_404(id)
-    return render_template('visualizar.html', aluno=aluno)
+def listar_usuarios():
+    usuarios = Usuario.query.order_by(Usuario.username).all()
+    return render_template('usuarios.html', usuarios=usuarios)
 
-@app.route('/imprimir/<int:id>')
+@app.route('/registrar_usuario', methods=['GET', 'POST'])
 @login_required
-def imprimir(id):
-    aluno = Aluno.query.get_or_404(id)
-    return render_template('ficha_impressao.html', aluno=aluno)
+def registrar_usuario():
+    form = RegistroUsuarioForm()
+    if form.validate_on_submit():
+        if Usuario.query.filter_by(username=form.username.data).first():
+            flash('Este usuário já existe.', 'warning')
+        else:
+            hash_pw = generate_password_hash(form.password.data)
+            novo_user = Usuario(username=form.username.data, password=hash_pw)
+            db.session.add(novo_user)
+            db.session.commit()
+            flash(f'Usuário {novo_user.username} criado com sucesso!', 'success')
+            return redirect(url_for('listar_usuarios'))
+    return render_template('registrar_usuario.html', form=form)
+
+@app.route('/excluir_usuario/<int:id>', methods=['POST'])
+@login_required
+def excluir_usuario(id):
+    if id == session.get('user_id'):
+        flash('Você não pode excluir o usuário que está usando no momento.', 'danger')
+        return redirect(url_for('listar_usuarios'))
+    user = Usuario.query.get_or_404(id)
+    db.session.delete(user)
+    db.session.commit()
+    flash('Usuário removido com sucesso!', 'success')
+    return redirect(url_for('listar_usuarios'))
 
 @app.route('/static/uploads/<filename>')
 def uploaded_file(filename):
@@ -213,5 +242,4 @@ def utility_processor():
     return dict(format_currency=format_currency, format_date=format_date, format_boolean=format_boolean, now=datetime.now())
 
 if __name__ == '__main__':
-    # host='0.0.0.0' permite acesso de outros dispositivos na rede local
     app.run(debug=True, host='0.0.0.0', port=5000)
