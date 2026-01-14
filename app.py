@@ -96,7 +96,6 @@ def index():
 def relatorio():
     filtro = request.args.get('filtro', 'TODOS')
     query = Aluno.query
-
     if filtro == 'ATIVOS':
         alunos = query.filter_by(desistencia='NÃO').order_by(Aluno.nome_completo).all()
     elif filtro == 'DESISTENTES':
@@ -115,8 +114,20 @@ def relatorio():
         alunos = query.filter_by(bolsa_familia=True).order_by(Aluno.nome_completo).all()
     else:
         alunos = query.order_by(Aluno.nome_completo).all()
-
     return render_template('relatorio.html', alunos=alunos, filtro_atual=filtro)
+
+@app.route('/backup')
+@login_required
+def backup_db():
+    try:
+        nome_backup = f"backup_alunos_{datetime.now().strftime('%Y%m%d_%H%M%S')}.db"
+        return send_from_directory(directory=BASE_DIR, 
+                                   path="database.db", 
+                                   as_attachment=True, 
+                                   download_name=nome_backup)
+    except Exception as e:
+        flash(f"Erro ao gerar backup: {str(e)}", "danger")
+        return redirect(url_for('index'))
 
 @app.route('/cadastrar', methods=['GET', 'POST'])
 @login_required
@@ -156,7 +167,6 @@ def editar(id):
                     p = os.path.join(app.config['UPLOAD_FOLDER'], aluno.documento)
                     if os.path.exists(p): os.remove(p)
                 aluno.documento = novo_doc
-        
         foto_temp = aluno.foto
         doc_temp = aluno.documento
         form.populate_obj(aluno)
