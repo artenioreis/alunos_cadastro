@@ -1,26 +1,39 @@
 import os
+import uuid
+import webbrowser
 from datetime import datetime
-from flask import Flask, render_template, request, redirect, url_for, flash, send_from_directory, session
+from threading import Timer
 from functools import wraps
+from flask import Flask, render_template, request, redirect, url_for, flash, send_from_directory, session
 from werkzeug.security import generate_password_hash, check_password_hash
+from werkzeug.utils import secure_filename
 from models import db, Aluno, Usuario
 from forms import AlunoForm, LoginForm, RegistroUsuarioForm
-from werkzeug.utils import secure_filename
+from config import Config
 
 app = Flask(__name__)
-BASE_DIR = os.path.abspath(os.path.dirname(__file__))
-app.config['SECRET_KEY'] = 'sua-chave-secreta-aqui-123456789'
-app.config['SQLALCHEMY_DATABASE_URI'] = f'sqlite:///{os.path.join(BASE_DIR, "database.db")}'
-app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-app.config['UPLOAD_FOLDER'] = os.path.join(BASE_DIR, 'static', 'uploads')
-
+app.config.from_object(Config)
+Config.init_app(app)
 db.init_app(app)
+
 with app.app_context():
-    db.create_all() 
+    db.create_all()
+    with db.engine.connect() as conn:
+        conn.execute(db.text("PRAGMA journal_mode=WAL;"))
+    
+    if not Usuario.query.filter_by(username='admin').first():
+        db.session.add(Usuario(username='admin', password=generate_password_hash('1234')))
+        db.session.commit()
 
-os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
+@app.errorhandler(413)
+def request_entity_too_large(error):
+    flash('O ficheiro é demasiado grande! O limite máximo permitido para anexos é de 64MB.', 'danger')
+    return redirect(request.referrer or url_for('index'))
 
-# Decorator para exigir login
+@app.teardown_appcontext
+def shutdown_session(exception=None):
+    db.session.remove()
+
 def login_required(f):
     @wraps(f)
     def decorated_function(*args, **kwargs):
@@ -29,15 +42,12 @@ def login_required(f):
         return f(*args, **kwargs)
     return decorated_function
 
-# Função auxiliar para salvar ficheiros
 def salvar_arquivo(file):
     if file and hasattr(file, 'filename') and file.filename != '':
-        timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
-        filename = secure_filename(file.filename)
-        nome_arquivo = f"{timestamp}_{filename}"
-        caminho = os.path.join(app.config['UPLOAD_FOLDER'], nome_arquivo)
-        file.save(caminho)
-        return nome_arquivo
+        uid = str(uuid.uuid4())[:8]
+        nome = f"{datetime.now().strftime('%Y%m%d_%H%M%S')}_{uid}_{secure_filename(file.filename)}"
+        file.save(os.path.join(app.config['UPLOAD_FOLDER'], nome))
+        return nome
     return None
 
 @app.route('/login', methods=['GET', 'POST'])
@@ -46,10 +56,10 @@ def login():
     if form.validate_on_submit():
         user = Usuario.query.filter_by(username=form.username.data).first()
         if user and check_password_hash(user.password, form.password.data):
+            session.permanent = True
             session['logged_in'] = True
-            session['user_id'] = user.id
             session['username'] = user.username
-            flash('Login realizado com sucesso!', 'success')
+            session['user_id'] = user.id
             return redirect(url_for('index'))
         flash('Usuário ou senha incorretos', 'danger')
     return render_template('login.html', form=form)
@@ -57,95 +67,61 @@ def login():
 @app.route('/logout')
 def logout():
     session.clear()
-    flash('Você saiu do sistema.', 'info')
     return redirect(url_for('login'))
 
 @app.route('/')
 @login_required
 def index():
-    termo_busca = request.args.get('q', '')
-    if termo_busca:
-        alunos = Aluno.query.filter(Aluno.nome_completo.ilike(f'%{termo_busca}%')).order_by(Aluno.nome_completo).all()
-    else:
-        alunos = Aluno.query.order_by(Aluno.nome_completo).all()
-    
-    ativos = Aluno.query.filter_by(desistencia='NÃO').count()
-    desistentes = Aluno.query.filter_by(desistencia='SIM').count()
-    cultural = Aluno.query.filter_by(setor='CULTURAL', desistencia='NÃO').count()
-    profissional = Aluno.query.filter_by(setor='PROFISSIONALIZANTE', desistencia='NÃO').count()
-    bolsa = Aluno.query.filter_by(bolsa_familia=True, desistencia='NÃO').count()
-    criancas = Aluno.query.filter(Aluno.idade < 12, Aluno.desistencia == 'NÃO').count()
-    adolescentes = Aluno.query.filter(Aluno.idade >= 12, Aluno.idade < 18, Aluno.desistencia == 'NÃO').count()
-    adultos = Aluno.query.filter(Aluno.idade >= 18, Aluno.desistencia == 'NÃO').count()
-    
-    return render_template('index.html', 
-                           alunos=alunos, 
-                           cultural=cultural, 
-                           profissionalizante=profissional, 
-                           bolsa_familia=bolsa, 
-                           criancas=criancas, 
-                           adolescentes=adolescentes, 
-                           adultos=adultos,
-                           ativos=ativos,
-                           desistentes=desistentes,
-                           total_alunos=len(alunos), 
-                           termo_busca=termo_busca)
-
-@app.route('/relatorio')
-@login_required
-def relatorio():
-    filtro = request.args.get('filtro', 'TODOS')
+    termo = request.args.get('q', '')
     query = Aluno.query
-    if filtro == 'ATIVOS':
-        alunos = query.filter_by(desistencia='NÃO').order_by(Aluno.nome_completo).all()
-    elif filtro == 'DESISTENTES':
-        alunos = query.filter_by(desistencia='SIM').order_by(Aluno.nome_completo).all()
-    elif filtro == 'CULTURAL':
-        alunos = query.filter_by(setor='CULTURAL').order_by(Aluno.nome_completo).all()
-    elif filtro == 'PROFISSIONALIZANTE':
-        alunos = query.filter_by(setor='PROFISSIONALIZANTE').order_by(Aluno.nome_completo).all()
-    elif filtro == 'CRIANCAS':
-        alunos = query.filter(Aluno.idade < 12).order_by(Aluno.nome_completo).all()
-    elif filtro == 'JOVENS':
-        alunos = query.filter(Aluno.idade >= 12, Aluno.idade < 18).order_by(Aluno.nome_completo).all()
-    elif filtro == 'ADULTOS':
-        alunos = query.filter(Aluno.idade >= 18).order_by(Aluno.nome_completo).all()
-    elif filtro == 'BOLSA_FAMILIA':
-        alunos = query.filter_by(bolsa_familia=True).order_by(Aluno.nome_completo).all()
+    if termo:
+        alunos = query.filter(Aluno.nome_completo.ilike(f'%{termo}%')).all()
     else:
-        alunos = query.order_by(Aluno.nome_completo).all()
-    return render_template('relatorio.html', alunos=alunos, filtro_atual=filtro)
-
-@app.route('/backup')
-@login_required
-def backup_db():
-    try:
-        nome_backup = f"backup_alunos_{datetime.now().strftime('%Y%m%d_%H%M%S')}.db"
-        return send_from_directory(directory=BASE_DIR, 
-                                   path="database.db", 
-                                   as_attachment=True, 
-                                   download_name=nome_backup)
-    except Exception as e:
-        flash(f"Erro ao gerar backup: {str(e)}", "danger")
-        return redirect(url_for('index'))
+        alunos = query.all()
+    
+    # AJUSTE DOS CARDS: Cálculos explícitos para o index.html
+    stats = {
+        'ativos': Aluno.query.filter_by(desistencia='NÃO').count(),
+        'desistentes': Aluno.query.filter_by(desistencia='SIM').count(),
+        'cultural': Aluno.query.filter_by(setor='CULTURAL', desistencia='NÃO').count(),
+        'profissionalizante': Aluno.query.filter_by(setor='PROFISSIONALIZANTE', desistencia='NÃO').count(),
+        'bolsa_familia': Aluno.query.filter_by(bolsa_familia=True, desistencia='NÃO').count(),
+        'criancas': Aluno.query.filter(Aluno.idade < 12, Aluno.desistencia == 'NÃO').count(),
+        'adolescentes': Aluno.query.filter(Aluno.idade >= 12, Aluno.idade < 18, Aluno.desistencia == 'NÃO').count(),
+        'adultos': Aluno.query.filter(Aluno.idade >= 18, Aluno.desistencia == 'NÃO').count(),
+        'total_alunos': len(alunos)
+    }
+    return render_template('index.html', alunos=alunos, termo_busca=termo, **stats)
 
 @app.route('/cadastrar', methods=['GET', 'POST'])
 @login_required
 def cadastrar():
     form = AlunoForm()
     if form.validate_on_submit():
-        foto_nome = salvar_arquivo(form.foto.data)
-        doc_nome = salvar_arquivo(form.documento.data)
-        novo_aluno = Aluno()
-        form.populate_obj(novo_aluno)
-        novo_aluno.foto = foto_nome
-        novo_aluno.documento = doc_nome
-        novo_aluno.atualizar_idade()
-        db.session.add(novo_aluno)
-        db.session.commit()
-        flash('Aluno cadastrado com sucesso!', 'success')
-        return redirect(url_for('index'))
+        try:
+            novo = Aluno()
+            form.populate_obj(novo)
+            novo.foto = salvar_arquivo(form.foto.data)
+            novo.documento = salvar_arquivo(form.documento.data)
+            novo.atualizar_idade()
+            db.session.add(novo)
+            db.session.commit()
+            flash('Aluno cadastrado!', 'success')
+            return redirect(url_for('index'))
+        except Exception as e:
+            db.session.rollback()
+            flash(f"Erro ao salvar: {str(e)}", "danger")
+    elif request.method == 'POST':
+        for field, errors in form.errors.items():
+            for error in errors:
+                flash(f"Erro no campo {getattr(form, field).label.text}: {error}", "warning")
     return render_template('cadastrar.html', form=form)
+
+@app.route('/visualizar/<int:id>')
+@login_required
+def visualizar(id):
+    aluno = Aluno.query.get_or_404(id)
+    return render_template('visualizar.html', aluno=aluno)
 
 @app.route('/editar/<int:id>', methods=['GET', 'POST'])
 @login_required
@@ -153,36 +129,26 @@ def editar(id):
     aluno = Aluno.query.get_or_404(id)
     form = AlunoForm(obj=aluno)
     if form.validate_on_submit():
-        if form.foto.data:
-            nova_foto = salvar_arquivo(form.foto.data)
-            if nova_foto:
-                if aluno.foto:
-                    p = os.path.join(app.config['UPLOAD_FOLDER'], aluno.foto)
-                    if os.path.exists(p): os.remove(p)
-                aluno.foto = nova_foto
-        if form.documento.data:
-            novo_doc = salvar_arquivo(form.documento.data)
-            if novo_doc:
-                if aluno.documento:
-                    p = os.path.join(app.config['UPLOAD_FOLDER'], aluno.documento)
-                    if os.path.exists(p): os.remove(p)
-                aluno.documento = novo_doc
-        foto_temp = aluno.foto
-        doc_temp = aluno.documento
-        form.populate_obj(aluno)
-        aluno.foto = foto_temp
-        aluno.documento = doc_temp
-        aluno.atualizar_idade()
-        db.session.commit()
-        flash('Cadastro atualizado!', 'success')
-        return redirect(url_for('index'))
+        try:
+            foto_at = aluno.foto
+            doc_at = aluno.documento
+            form.populate_obj(aluno)
+            if form.foto.data and hasattr(form.foto.data, 'filename') and form.foto.data.filename != '':
+                aluno.foto = salvar_arquivo(form.foto.data)
+            else:
+                aluno.foto = foto_at
+            if form.documento.data and hasattr(form.documento.data, 'filename') and form.documento.data.filename != '':
+                aluno.documento = salvar_arquivo(form.documento.data)
+            else:
+                aluno.documento = doc_at
+            aluno.atualizar_idade()
+            db.session.commit()
+            flash('Cadastro atualizado!', 'success')
+            return redirect(url_for('index'))
+        except Exception as e:
+            db.session.rollback()
+            flash(f"Erro ao editar: {str(e)}", "danger")
     return render_template('editar.html', form=form, aluno=aluno)
-
-@app.route('/visualizar/<int:id>')
-@login_required
-def visualizar(id):
-    aluno = Aluno.query.get_or_404(id)
-    return render_template('visualizar.html', aluno=aluno)
 
 @app.route('/imprimir/<int:id>')
 @login_required
@@ -194,19 +160,26 @@ def imprimir(id):
 @login_required
 def excluir(id):
     aluno = Aluno.query.get_or_404(id)
-    for arq in [aluno.foto, aluno.documento]:
-        if arq:
-            path = os.path.join(app.config['UPLOAD_FOLDER'], arq)
-            if os.path.exists(path): os.remove(path)
     db.session.delete(aluno)
     db.session.commit()
-    flash('Aluno excluído com sucesso!', 'success')
+    flash('Registro excluído!', 'info')
     return redirect(url_for('index'))
+
+@app.route('/relatorio')
+@login_required
+def relatorio():
+    alunos = Aluno.query.order_by(Aluno.nome_completo).all()
+    return render_template('relatorio.html', alunos=alunos)
+
+@app.route('/backup')
+@login_required
+def backup_db():
+    return send_from_directory(app.config['BASE_DIR'], 'database.db', as_attachment=True)
 
 @app.route('/usuarios')
 @login_required
 def listar_usuarios():
-    usuarios = Usuario.query.order_by(Usuario.username).all()
+    usuarios = Usuario.query.all()
     return render_template('usuarios.html', usuarios=usuarios)
 
 @app.route('/registrar_usuario', methods=['GET', 'POST'])
@@ -214,27 +187,21 @@ def listar_usuarios():
 def registrar_usuario():
     form = RegistroUsuarioForm()
     if form.validate_on_submit():
-        if Usuario.query.filter_by(username=form.username.data).first():
-            flash('Este usuário já existe.', 'warning')
-        else:
-            hash_pw = generate_password_hash(form.password.data)
-            novo_user = Usuario(username=form.username.data, password=hash_pw)
-            db.session.add(novo_user)
-            db.session.commit()
-            flash(f'Usuário {novo_user.username} criado com sucesso!', 'success')
-            return redirect(url_for('listar_usuarios'))
+        hash_pw = generate_password_hash(form.password.data)
+        db.session.add(Usuario(username=form.username.data, password=hash_pw))
+        db.session.commit()
+        return redirect(url_for('listar_usuarios'))
     return render_template('registrar_usuario.html', form=form)
 
 @app.route('/excluir_usuario/<int:id>', methods=['POST'])
 @login_required
 def excluir_usuario(id):
     if id == session.get('user_id'):
-        flash('Você não pode excluir o usuário que está usando no momento.', 'danger')
+        flash('Não é possível excluir o próprio usuário!', 'danger')
         return redirect(url_for('listar_usuarios'))
     user = Usuario.query.get_or_404(id)
     db.session.delete(user)
     db.session.commit()
-    flash('Usuário removido com sucesso!', 'success')
     return redirect(url_for('listar_usuarios'))
 
 @app.route('/static/uploads/<filename>')
@@ -243,21 +210,11 @@ def uploaded_file(filename):
 
 @app.context_processor
 def utility_processor():
-    def format_currency(value): 
-        return f"R$ {value:,.2f}".replace('.', ',') if value is not None else "R$ 0,00"
-    def format_date(value): 
-        return value.strftime('%d/%m/%Y') if value else ""
-    def format_boolean(value):
-        return "SIM" if value else "NÃO"
-    return dict(format_currency=format_currency, format_date=format_date, format_boolean=format_boolean, now=datetime.now())
-
-import webbrowser
-from threading import Timer
-
-def open_browser():
-      webbrowser.open_new('http://127.0.0.1:5000/')
+    def format_currency(value): return f"R$ {value:,.2f}".replace('.', ',') if value else "R$ 0,00"
+    def format_date(value): return value.strftime('%d/%m/%Y') if value else ""
+    def format_boolean(value): return "SIM" if value else "NÃO"
+    return dict(format_currency=format_currency, format_date=format_date, format_boolean=format_boolean)
 
 if __name__ == '__main__':
-    # Abre o navegador após 2 segundos
-    Timer(2, open_browser).start()
-    app.run(debug=False, host='0.0.0.0', port=5000)
+    Timer(2, lambda: webbrowser.open('http://127.0.0.1:5000/')).start()
+    app.run(host='0.0.0.0', port=5000, threaded=True)
