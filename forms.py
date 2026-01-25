@@ -6,7 +6,7 @@ from wtforms.validators import DataRequired, Length, Optional, EqualTo, InputReq
 class AlunoForm(FlaskForm):
     foto = FileField('Foto do Aluno', validators=[FileAllowed(['jpg', 'jpeg', 'png'], 'Apenas imagens!')], render_kw={"class": "form-control"})
     documento = FileField('Anexar Documento', validators=[FileAllowed(['pdf', 'jpg', 'png'], 'PDF ou Imagem!')], render_kw={"class": "form-control"})
-    nome_completo = StringField('Nome Completo', validators=[DataRequired()], render_kw={"class": "form-control"})
+    nome_completo = StringField('Nome Completo', validators=[DataRequired(message="O nome é obrigatório")], render_kw={"class": "form-control"})
     cpf = StringField('CPF', validators=[Optional()], render_kw={"class": "form-control"})
     rg_certidao = StringField('RG ou Certidão', validators=[Optional()], render_kw={"class": "form-control"})
     telefone = StringField('Telefone', validators=[Optional()], render_kw={"class": "form-control"})

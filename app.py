@@ -7,6 +7,9 @@ from functools import wraps
 from flask import Flask, render_template, request, redirect, url_for, flash, send_from_directory, session
 from werkzeug.security import generate_password_hash, check_password_hash
 from werkzeug.utils import secure_filename
+from waitress import serve  # Servidor de produção
+
+# Importações internas do seu projeto
 from models import db, Aluno, Usuario
 from forms import AlunoForm, LoginForm, RegistroUsuarioForm
 from config import Config
@@ -16,18 +19,26 @@ app.config.from_object(Config)
 Config.init_app(app)
 db.init_app(app)
 
+# Inicialização do Banco e Modo WAL (Essencial para funcionamento estável em rede)
 with app.app_context():
     db.create_all()
-    with db.engine.connect() as conn:
-        conn.execute(db.text("PRAGMA journal_mode=WAL;"))
+    try:
+        with db.engine.connect() as conn:
+            conn.execute(db.text("PRAGMA journal_mode=WAL;"))
+    except Exception as e:
+        print(f"Aviso ao ativar modo WAL: {e}")
     
+    # Cria o usuário inicial admin:1234 se o sistema estiver vazio
     if not Usuario.query.filter_by(username='admin').first():
         db.session.add(Usuario(username='admin', password=generate_password_hash('1234')))
         db.session.commit()
+        print("Usuário administrador inicial criado (admin:1234)")
+
+# --- Tratamento de Erros e Sessão ---
 
 @app.errorhandler(413)
 def request_entity_too_large(error):
-    flash('O ficheiro é demasiado grande! O limite máximo permitido para anexos é de 64MB.', 'danger')
+    flash('O ficheiro é demasiado grande! O limite máximo para anexos é de 64MB.', 'danger')
     return redirect(request.referrer or url_for('index'))
 
 @app.teardown_appcontext
@@ -49,6 +60,8 @@ def salvar_arquivo(file):
         file.save(os.path.join(app.config['UPLOAD_FOLDER'], nome))
         return nome
     return None
+
+# --- Rotas Principais ---
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
@@ -75,11 +88,11 @@ def index():
     termo = request.args.get('q', '')
     query = Aluno.query
     if termo:
-        alunos = query.filter(Aluno.nome_completo.ilike(f'%{termo}%')).all()
+        alunos = query.filter(Aluno.nome_completo.ilike(f'%{termo}%')).order_by(Aluno.nome_completo).all()
     else:
-        alunos = query.all()
+        alunos = query.order_by(Aluno.nome_completo).all()
     
-    # AJUSTE DOS CARDS: Cálculos explícitos para o index.html
+    # Cálculo exato para os 8 cards do Dashboard
     stats = {
         'ativos': Aluno.query.filter_by(desistencia='NÃO').count(),
         'desistentes': Aluno.query.filter_by(desistencia='SIM').count(),
@@ -89,9 +102,10 @@ def index():
         'criancas': Aluno.query.filter(Aluno.idade < 12, Aluno.desistencia == 'NÃO').count(),
         'adolescentes': Aluno.query.filter(Aluno.idade >= 12, Aluno.idade < 18, Aluno.desistencia == 'NÃO').count(),
         'adultos': Aluno.query.filter(Aluno.idade >= 18, Aluno.desistencia == 'NÃO').count(),
-        'total_alunos': len(alunos)
+        'total_alunos': len(alunos),
+        'termo_busca': termo
     }
-    return render_template('index.html', alunos=alunos, termo_busca=termo, **stats)
+    return render_template('index.html', alunos=alunos, **stats)
 
 @app.route('/cadastrar', methods=['GET', 'POST'])
 @login_required
@@ -106,7 +120,7 @@ def cadastrar():
             novo.atualizar_idade()
             db.session.add(novo)
             db.session.commit()
-            flash('Aluno cadastrado!', 'success')
+            flash('Aluno cadastrado com sucesso!', 'success')
             return redirect(url_for('index'))
         except Exception as e:
             db.session.rollback()
@@ -130,17 +144,21 @@ def editar(id):
     form = AlunoForm(obj=aluno)
     if form.validate_on_submit():
         try:
-            foto_at = aluno.foto
-            doc_at = aluno.documento
+            foto_anterior = aluno.foto
+            doc_anterior = aluno.documento
             form.populate_obj(aluno)
+            
+            # Corrige a troca de fotos: salva apenas o nome (string) no banco
             if form.foto.data and hasattr(form.foto.data, 'filename') and form.foto.data.filename != '':
                 aluno.foto = salvar_arquivo(form.foto.data)
             else:
-                aluno.foto = foto_at
+                aluno.foto = foto_anterior
+                
             if form.documento.data and hasattr(form.documento.data, 'filename') and form.documento.data.filename != '':
                 aluno.documento = salvar_arquivo(form.documento.data)
             else:
-                aluno.documento = doc_at
+                aluno.documento = doc_anterior
+                
             aluno.atualizar_idade()
             db.session.commit()
             flash('Cadastro atualizado!', 'success')
@@ -165,13 +183,15 @@ def excluir(id):
     flash('Registro excluído!', 'info')
     return redirect(url_for('index'))
 
+# --- Gestão de Sistema e Usuários ---
+
 @app.route('/relatorio')
 @login_required
 def relatorio():
     alunos = Aluno.query.order_by(Aluno.nome_completo).all()
     return render_template('relatorio.html', alunos=alunos)
 
-@app.route('/backup')
+@app.route('/backup_db')
 @login_required
 def backup_db():
     return send_from_directory(app.config['BASE_DIR'], 'database.db', as_attachment=True)
@@ -190,6 +210,7 @@ def registrar_usuario():
         hash_pw = generate_password_hash(form.password.data)
         db.session.add(Usuario(username=form.username.data, password=hash_pw))
         db.session.commit()
+        flash('Novo usuário cadastrado!', 'success')
         return redirect(url_for('listar_usuarios'))
     return render_template('registrar_usuario.html', form=form)
 
@@ -208,6 +229,8 @@ def excluir_usuario(id):
 def uploaded_file(filename):
     return send_from_directory(app.config['UPLOAD_FOLDER'], filename)
 
+# --- Processadores Úteis ---
+
 @app.context_processor
 def utility_processor():
     def format_currency(value): return f"R$ {value:,.2f}".replace('.', ',') if value else "R$ 0,00"
@@ -215,6 +238,12 @@ def utility_processor():
     def format_boolean(value): return "SIM" if value else "NÃO"
     return dict(format_currency=format_currency, format_date=format_date, format_boolean=format_boolean)
 
+def open_browser():
+    webbrowser.open_new('http://127.0.0.1:5000/')
+
+# --- Execução com Waitress (Produção) ---
+
 if __name__ == '__main__':
-    Timer(2, lambda: webbrowser.open('http://127.0.0.1:5000/')).start()
-    app.run(host='0.0.0.0', port=5000, threaded=True)
+    Timer(2, open_browser).start()
+    # serve() substitui o app.run() para suportar rede e múltiplos usuários
+    serve(app, host='0.0.0.0', port=5000, threads=8)
