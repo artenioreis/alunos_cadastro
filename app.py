@@ -88,7 +88,11 @@ def index():
     termo = request.args.get('q', '')
     query = Aluno.query
     if termo:
-        alunos = query.filter(Aluno.nome_completo.ilike(f'%{termo}%')).order_by(Aluno.nome_completo).all()
+        # Ajuste na busca para incluir o campo curso
+        alunos = query.filter(
+            (Aluno.nome_completo.ilike(f'%{termo}%')) | 
+            (Aluno.curso.ilike(f'%{termo}%'))
+        ).order_by(Aluno.nome_completo).all()
     else:
         alunos = query.order_by(Aluno.nome_completo).all()
     
@@ -194,6 +198,14 @@ def relatorio():
 @app.route('/backup_db')
 @login_required
 def backup_db():
+    try:
+        # Força o SQLite a transferir os dados dos arquivos temporários (-wal) 
+        # para o arquivo principal (database.db) antes de realizar a cópia.
+        with db.engine.connect() as conn:
+            conn.execute(db.text("PRAGMA wal_checkpoint(TRUNCATE);"))
+    except Exception as e:
+        print(f"Erro ao sincronizar banco para backup: {e}")
+    
     return send_from_directory(app.config['BASE_DIR'], 'database.db', as_attachment=True)
 
 @app.route('/usuarios')

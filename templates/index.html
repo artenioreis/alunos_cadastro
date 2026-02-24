@@ -35,7 +35,7 @@
 <div class="row mb-4">
     <div class="col-md-3">
         <div class="stat-card stat-crianca">
-            <h3><i class="bi bi-person-video"></i></h3> 
+            <h3><i class="bi bi-person-video"></i></h3>
             <h4>{{ criancas }}</h4>
             <p>Crianças (até 11)</p>
         </div>
@@ -76,8 +76,8 @@
                 <span class="input-group-text bg-white border-end-0">
                     <i class="bi bi-search text-muted"></i>
                 </span>
-                <input type="text" name="q" class="form-control border-start-0" 
-                       placeholder="Pesquisar por nome do aluno..." value="{{ termo_busca }}">
+                <input type="text" name="q" class="form-control border-start-0"
+                    placeholder="Pesquisar por nome do aluno..." value="{{ termo_busca }}">
                 <button class="btn btn-primary" type="submit">Buscar</button>
                 {% if termo_busca %}
                 <a href="{{ url_for('index') }}" class="btn btn-outline-secondary">
@@ -105,9 +105,11 @@
                     <tr>
                         <td>
                             {% if aluno.foto %}
-                            <img src="{{ url_for('uploaded_file', filename=aluno.foto) }}" class="aluno-foto" style="width: 50px; height: 50px;">
+                            <img src="{{ url_for('uploaded_file', filename=aluno.foto) }}" class="aluno-foto"
+                                style="width: 50px; height: 50px;">
                             {% else %}
-                            <div class="aluno-foto bg-secondary d-flex align-items-center justify-content-center" style="width: 50px; height: 50px;">
+                            <div class="aluno-foto bg-secondary d-flex align-items-center justify-content-center"
+                                style="width: 50px; height: 50px;">
                                 <i class="bi bi-person text-white"></i>
                             </div>
                             {% endif %}
@@ -122,18 +124,16 @@
                         </td>
                         <td class="text-center">
                             <div class="btn-group" role="group">
-                                <a href="{{ url_for('visualizar', id=aluno.id) }}" 
-                                   class="btn btn-sm btn-info text-white" title="Visualizar">
+                                <a href="{{ url_for('visualizar', id=aluno.id) }}"
+                                    class="btn btn-sm btn-info text-white" title="Visualizar">
                                     <i class="bi bi-eye"></i>
                                 </a>
-                                <a href="{{ url_for('editar', id=aluno.id) }}" 
-                                   class="btn btn-sm btn-warning" title="Editar">
+                                <a href="{{ url_for('editar', id=aluno.id) }}" class="btn btn-sm btn-warning"
+                                    title="Editar">
                                     <i class="bi bi-pencil"></i>
                                 </a>
-                                <form action="{{ url_for('excluir', id=aluno.id) }}" 
-                                      method="POST" 
-                                      class="d-inline"
-                                      onsubmit="return confirm('Tem certeza que deseja excluir permanentemente este aluno?');">
+                                <form action="{{ url_for('excluir', id=aluno.id) }}" method="POST" class="d-inline"
+                                    onsubmit="return confirm('Tem certeza que deseja excluir permanentemente este aluno?');">
                                     <button type="submit" class="btn btn-sm btn-danger" title="Excluir">
                                         <i class="bi bi-trash"></i>
                                     </button>
