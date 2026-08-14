@@ -13,7 +13,7 @@
                 <form method="POST" enctype="multipart/form-data">
                     {{ form.hidden_tag() }}
                     <div class="row">
-                        <div class="col-md-4 text-center">
+                        <div class="col-md-3 text-center">
                             <div class="mb-4">
                                 {% if aluno.foto %}
                                     <img src="{{ url_for('uploaded_file', filename=aluno.foto) }}" class="aluno-foto mb-3 shadow" style="width:200px; height:200px; border-radius: 15px; object-fit: cover;">
@@ -50,7 +50,7 @@
                             </div>
                         </div>
 
-                        <div class="col-md-8">
+                        <div class="col-md-9">
                             <h5 class="border-bottom pb-2 mb-3 text-primary">Status e Inscrição</h5>
                             <div class="row bg-light p-3 rounded mb-4">
                                 <div class="col-md-6 mb-3">
