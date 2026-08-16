@@ -125,17 +125,17 @@
                         <td class="text-center">
                             <div class="btn-group" role="group">
                                 <a href="{{ url_for('visualizar', id=aluno.id) }}"
-                                    class="btn btn-sm btn-info text-white" title="Visualizar">
-                                    <i class="bi bi-eye"></i>
+                                    class="btn btn-sm btn-info text-white" title="Visualizar" aria-label="Visualizar aluno">
+                                    <i class="bi bi-eye" aria-hidden="true"></i>
                                 </a>
                                 <a href="{{ url_for('editar', id=aluno.id) }}" class="btn btn-sm btn-warning"
-                                    title="Editar">
-                                    <i class="bi bi-pencil"></i>
+                                    title="Editar" aria-label="Editar aluno">
+                                    <i class="bi bi-pencil" aria-hidden="true"></i>
                                 </a>
                                 <form action="{{ url_for('excluir', id=aluno.id) }}" method="POST" class="d-inline"
                                     onsubmit="return confirm('Tem certeza que deseja excluir permanentemente este aluno?');">
-                                    <button type="submit" class="btn btn-sm btn-danger" title="Excluir">
-                                        <i class="bi bi-trash"></i>
+                                    <button type="submit" class="btn btn-sm btn-danger" title="Excluir" aria-label="Excluir aluno">
+                                        <i class="bi bi-trash" aria-hidden="true"></i>
                                     </button>
                                 </form>
                             </div>
