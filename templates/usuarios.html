@@ -33,13 +33,13 @@
                                     {% if user.id != session.user_id %}
                                     <form action="{{ url_for('excluir_usuario', id=user.id) }}" method="POST" 
                                           onsubmit="return confirm('Excluir este acesso? Ele perderá a entrada no sistema.');" class="d-inline">
-                                        <button type="submit" class="btn btn-sm btn-outline-danger">
-                                            <i class="bi bi-trash"></i>
+                                        <button type="submit" class="btn btn-sm btn-outline-danger" title="Excluir usuário" aria-label="Excluir usuário">
+                                            <i class="bi bi-trash" aria-hidden="true"></i>
                                         </button>
                                     </form>
                                     {% else %}
-                                    <button class="btn btn-sm btn-outline-secondary" disabled title="Você não pode se excluir">
-                                        <i class="bi bi-trash"></i>
+                                    <button class="btn btn-sm btn-outline-secondary" disabled title="Você não pode se excluir" aria-label="Você não pode se excluir">
+                                        <i class="bi bi-trash" aria-hidden="true"></i>
                                     </button>
                                     {% endif %}
                                 </td>
