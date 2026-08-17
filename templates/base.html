@@ -9,52 +9,122 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 </head>
 <body>
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark mb-4 no-print">
-        <div class="container">
-            <a class="navbar-brand" href="{{ url_for('index') }}">Sociedade da Redenção</a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            
-            {% if session.logged_in %}
-            <div class="collapse navbar-collapse" id="navbarNav">
-                <div class="navbar-nav ms-auto align-items-center">
-                    <span class="navbar-text me-3">
-                        <i class="bi bi-person-circle"></i> {{ session.username }}
-                    </span>
-                    <a class="nav-link" href="{{ url_for('relatorio') }}">
+    {% if session.logged_in %}
+    <div class="wrapper">
+        <!-- Sidebar -->
+        <nav class="sidebar no-print" id="sidebar">
+            <div class="sidebar-header">
+                <img src="{{ url_for('static', filename='images/cropped-sociedade_da_redencao_logotipo_retangular01_cor.png') }}" alt="Logo" class="img-fluid">
+            </div>
+
+            <ul class="list-unstyled components">
+                <li>
+                    <a href="{{ url_for('index') }}">
+                        <i class="bi bi-house-door"></i> Dashboard
+                    </a>
+                </li>
+                <li>
+                    <a href="{{ url_for('cadastrar') }}">
+                        <i class="bi bi-person-plus"></i> Novo Aluno
+                    </a>
+                </li>
+                <li>
+                    <a href="{{ url_for('relatorio') }}">
                         <i class="bi bi-file-earmark-bar-graph"></i> Relatórios
                     </a>
-                    <a class="nav-link" href="{{ url_for('backup_db') }}" title="Baixar Cópia de Segurança do Banco de Dados">
-                        <i class="bi bi-download"></i> Backup
-                    </a>
-                    <a class="nav-link" href="{{ url_for('listar_usuarios') }}">
+                </li>
+                <li>
+                    <a href="{{ url_for('listar_usuarios') }}">
                         <i class="bi bi-shield-lock"></i> Usuários
                     </a>
-                    <a class="nav-link text-danger" href="{{ url_for('logout') }}">
+                </li>
+                <li>
+                    <a href="{{ url_for('backup_db') }}" title="Baixar Cópia de Segurança do Banco de Dados">
+                        <i class="bi bi-download"></i> Backup DB
+                    </a>
+                </li>
+            </ul>
+        </nav>
+
+        <!-- Page Content -->
+        <div class="main-content" id="content">
+            <nav class="top-navbar no-print">
+                <div class="d-flex align-items-center">
+                    <button type="button" id="sidebarCollapse" class="btn btn-outline-primary d-md-none me-3">
+                        <i class="bi bi-list"></i>
+                    </button>
+                    <h5 class="mb-0 text-muted d-none d-md-block">Sistema de Cadastro</h5>
+                </div>
+
+                <div class="user-info d-flex align-items-center">
+                    <span class="me-3"><i class="bi bi-person-circle text-primary"></i> Olá, {{ session.username }}</span>
+                    <a href="{{ url_for('logout') }}" class="btn btn-sm btn-outline-danger">
                         <i class="bi bi-box-arrow-right"></i> Sair
                     </a>
                 </div>
+            </nav>
+
+            <div class="content-area">
+                {% with messages = get_flashed_messages(with_categories=true) %}
+                    {% if messages %}
+                        {% for category, message in messages %}
+                            <div class="alert alert-{{ category }} alert-dismissible fade show no-print shadow-sm">
+                                {{ message }}
+                                <button type="button" class="btn-close" data-bs-alert="alert"></button>
+                            </div>
+                        {% endfor %}
+                    {% endif %}
+                {% endwith %}
+
+                {% block content %}{% endblock %}
             </div>
-            {% endif %}
         </div>
-    </nav>
 
-    <div class="container">
-        {% with messages = get_flashed_messages(with_categories=true) %}
-            {% if messages %}
-                {% for category, message in messages %}
-                    <div class="alert alert-{{ category }} alert-dismissible fade show no-print">
-                        {{ message }}
-                        <button type="button" class="btn-close" data-bs-alert="alert"></button>
-                    </div>
-                {% endfor %}
-            {% endif %}
-        {% endwith %}
-
-        {% block content %}{% endblock %}
+        <!-- Overlay for mobile sidebar -->
+        <div class="sidebar-overlay"></div>
     </div>
+    {% else %}
+    <!-- Login Page specific layout -->
+    <div class="login-page">
+        <div class="container">
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    {% for category, message in messages %}
+                        <div class="alert alert-{{ category }} alert-dismissible fade show no-print shadow-sm">
+                            {{ message }}
+                            <button type="button" class="btn-close" data-bs-alert="alert"></button>
+                        </div>
+                    {% endfor %}
+                {% endif %}
+            {% endwith %}
+
+            {% block login_content %}{% endblock %}
+        </div>
+    </div>
+    {% endif %}
+
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="{{ url_for('static', filename='js/scripts.js') }}"></script>
+    <script>
+        // Sidebar toggle for mobile
+        document.addEventListener('DOMContentLoaded', function() {
+            var sidebarCollapse = document.getElementById('sidebarCollapse');
+            var sidebar = document.getElementById('sidebar');
+            var overlay = document.querySelector('.sidebar-overlay');
+
+            if(sidebarCollapse) {
+                sidebarCollapse.addEventListener('click', function() {
+                    sidebar.classList.toggle('active');
+                    overlay.classList.toggle('active');
+                });
+            }
+            if(overlay) {
+                overlay.addEventListener('click', function() {
+                    sidebar.classList.remove('active');
+                    overlay.classList.remove('active');
+                });
+            }
+        });
+    </script>
 </body>
 </html>

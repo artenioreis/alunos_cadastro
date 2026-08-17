@@ -2,71 +2,87 @@
 
 {% block content %}
 <div class="row mb-3">
-    <div class="col-md-3">
+    <div class="col-md-3 col-sm-6">
         <div class="stat-card stat-ativo">
-            <h3><i class="bi bi-person-check-fill"></i></h3>
-            <h4>{{ ativos }}</h4>
-            <p>Alunos Ativos</p>
+            <div class="stat-icon"><i class="bi bi-person-check-fill"></i></div>
+            <div class="stat-info">
+                <p>Alunos Ativos</p>
+                <h4>{{ ativos }}</h4>
+            </div>
         </div>
     </div>
-    <div class="col-md-3">
+    <div class="col-md-3 col-sm-6">
         <div class="stat-card stat-desistente">
-            <h3><i class="bi bi-person-x-fill"></i></h3>
-            <h4>{{ desistentes }}</h4>
-            <p>Desistentes</p>
+            <div class="stat-icon"><i class="bi bi-person-x-fill"></i></div>
+            <div class="stat-info">
+                <p>Desistentes</p>
+                <h4>{{ desistentes }}</h4>
+            </div>
         </div>
     </div>
-    <div class="col-md-3">
+    <div class="col-md-3 col-sm-6">
         <div class="stat-card stat-cultural">
-            <h3><i class="bi bi-music-note-beamed"></i></h3>
-            <h4>{{ cultural }}</h4>
-            <p>Setor Cultural</p>
+            <div class="stat-icon"><i class="bi bi-music-note-beamed"></i></div>
+            <div class="stat-info">
+                <p>Setor Cultural</p>
+                <h4>{{ cultural }}</h4>
+            </div>
         </div>
     </div>
-    <div class="col-md-3">
+    <div class="col-md-3 col-sm-6">
         <div class="stat-card stat-profissional">
-            <h3><i class="bi bi-briefcase-fill"></i></h3>
-            <h4>{{ profissionalizante }}</h4>
-            <p>Profissionalizante</p>
+            <div class="stat-icon"><i class="bi bi-briefcase-fill"></i></div>
+            <div class="stat-info">
+                <p>Profissionalizante</p>
+                <h4>{{ profissionalizante }}</h4>
+            </div>
         </div>
     </div>
 </div>
 
 <div class="row mb-4">
-    <div class="col-md-3">
+    <div class="col-md-3 col-sm-6">
         <div class="stat-card stat-crianca">
-            <h3><i class="bi bi-person-video"></i></h3>
-            <h4>{{ criancas }}</h4>
-            <p>Crianças (até 11)</p>
+            <div class="stat-icon"><i class="bi bi-emoji-smile"></i></div>
+            <div class="stat-info">
+                <p>Crianças (até 11)</p>
+                <h4>{{ criancas }}</h4>
+            </div>
         </div>
     </div>
-    <div class="col-md-3">
+    <div class="col-md-3 col-sm-6">
         <div class="stat-card stat-adolescente">
-            <h3><i class="bi bi-person-video"></i></h3>
-            <h4>{{ adolescentes }}</h4>
-            <p>Jovens (12 a 17)</p>
+            <div class="stat-icon"><i class="bi bi-backpack"></i></div>
+            <div class="stat-info">
+                <p>Jovens (12 a 17)</p>
+                <h4>{{ adolescentes }}</h4>
+            </div>
         </div>
     </div>
-    <div class="col-md-3">
+    <div class="col-md-3 col-sm-6">
         <div class="stat-card stat-adulto">
-            <h3><i class="bi bi-person-workspace"></i></h3>
-            <h4>{{ adultos }}</h4>
-            <p>Adultos (18+)</p>
+            <div class="stat-icon"><i class="bi bi-person-workspace"></i></div>
+            <div class="stat-info">
+                <p>Adultos (18+)</p>
+                <h4>{{ adultos }}</h4>
+            </div>
         </div>
     </div>
-    <div class="col-md-3">
+    <div class="col-md-3 col-sm-6">
         <div class="stat-card stat-bolsa">
-            <h3><i class="bi bi-cash-coin"></i></h3>
-            <h4>{{ bolsa_familia }}</h4>
-            <p>Bolsa Família</p>
+            <div class="stat-icon"><i class="bi bi-cash-coin"></i></div>
+            <div class="stat-info">
+                <p>Bolsa Família</p>
+                <h4>{{ bolsa_familia }}</h4>
+            </div>
         </div>
     </div>
 </div>
 
 <div class="card shadow">
-    <div class="card-header d-flex justify-content-between align-items-center">
-        <h4 class="mb-0"><i class="bi bi-list-ul"></i> Lista de Alunos ({{ total_alunos }})</h4>
-        <a href="{{ url_for('cadastrar') }}" class="btn btn-light btn-sm">
+    <div class="card-header d-flex justify-content-between align-items-center border-0">
+        <h4 class="mb-0"><i class="bi bi-list-ul me-2"></i>Lista de Alunos ({{ total_alunos }})</h4>
+        <a href="{{ url_for('cadastrar') }}" class="btn btn-primary btn-sm">
             <i class="bi bi-plus-circle"></i> Novo Aluno
         </a>
     </div>
