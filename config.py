@@ -6,9 +6,12 @@ class Config:
     SQLALCHEMY_DATABASE_URI = f'sqlite:///{os.path.join(BASE_DIR, "database.db")}'
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     
-    # Suporte para múltiplos notebooks na rede (timeout de 30s)
+    # Suporte para múltiplos notebooks na rede (timeout de 30s e suporte a múltiplas threads)
     SQLALCHEMY_ENGINE_OPTIONS = {
-        "connect_args": {"timeout": 30}
+        "connect_args": {
+            "timeout": 30,
+            "check_same_thread": False
+        }
     }
     
     UPLOAD_FOLDER = os.path.join(BASE_DIR, 'static', 'uploads')

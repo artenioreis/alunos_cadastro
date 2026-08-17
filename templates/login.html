@@ -1,47 +1,34 @@
 {% extends "base.html" %}
 
-{% block content %}
-<div class="row justify-content-center align-items-center" style="min-height: 60vh;">
-    <div class="col-md-5">
-        <div class="card shadow-lg border-0">
-            <div class="card-body p-5 text-center">
+{% block login_content %}
+<div class="row justify-content-center w-100">
+    <div class="col-md-6 col-lg-5 col-xl-4">
+        <div class="login-card">
+            <div class="login-card-body text-center">
                 <img src="{{ url_for('static', filename='images/cropped-sociedade_da_redencao_logotipo_retangular01_cor.png') }}" 
-                     alt="Logo" class="img-fluid mb-4" style="max-height: 120px;">
+                     alt="Logo" class="img-fluid mb-4" style="max-height: 100px;">
                 
-                <h3 class="mb-4" style="color: #2d2d2d; font-weight: 700;">Acesso ao Sistema</h3>
+                <h4 class="mb-4 text-muted" style="font-weight: 600;">Acesso ao Sistema</h4>
                 
                 <form method="POST">
                     {{ form.hidden_tag() }}
                     
                     <div class="mb-3 text-start">
-                        <label class="form-label">Usuário</label>
-                        {{ form.username }}
+                        <label class="form-label text-muted small text-uppercase fw-bold">Usuário</label>
+                        {{ form.username(class="form-control form-control-lg", required=True, placeholder="Digite seu usuário") }}
                     </div>
                     
                     <div class="mb-4 text-start">
-                        <label class="form-label">Senha</label>
-                        {{ form.password }}
+                        <label class="form-label text-muted small text-uppercase fw-bold">Senha</label>
+                        {{ form.password(class="form-control form-control-lg", required=True, placeholder="Digite sua senha") }}
                     </div>
                     
-                    <button type="submit" class="btn w-100 py-2 text-white" 
-                            style="background-color: #a689bd; border: none; font-weight: 600; transition: 0.3s;">
-                        Entrar
+                    <button type="submit" class="btn btn-primary w-100 py-2 btn-lg">
+                        <i class="bi bi-box-arrow-in-right"></i> Entrar
                     </button>
                 </form>
             </div>
         </div>
     </div>
 </div>
-
-<style>
-    /* Estilo específico para o botão de login baseado na logo */
-    .btn:hover {
-        background-color: #8e73a5 !important;
-        transform: translateY(-1px);
-    }
-    .form-control:focus {
-        border-color: #a689bd;
-        box-shadow: 0 0 0 0.25rem rgba(166, 137, 189, 0.25);
-    }
-</style>
 {% endblock %}
