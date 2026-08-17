@@ -113,6 +113,10 @@ body {
     vertical-align: middle;
 }
 
+.sidebar.active {
+    margin-left: calc(-1 * var(--sidebar-width));
+}
+
 .main-content {
     width: calc(100% - var(--sidebar-width));
     margin-left: var(--sidebar-width);
@@ -120,6 +124,11 @@ body {
     transition: all 0.3s;
     display: flex;
     flex-direction: column;
+}
+
+.main-content.active {
+    width: 100%;
+    margin-left: 0;
 }
 
 /* Navbar no conteúdo principal */
@@ -355,6 +364,9 @@ body {
     .main-content {
         width: 100%;
         margin-left: 0;
+    }
+    .main-content.active {
+        margin-left: 0; /* Ensures it stays 0 on mobile regardless of toggle state */
     }
     .sidebar-overlay {
         display: none;
