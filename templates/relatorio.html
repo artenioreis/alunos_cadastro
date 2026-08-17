@@ -60,7 +60,7 @@
                             </span>
                         </td>
                         <td class="text-center no-print">
-                            <a href="{{ url_for('imprimir', id=aluno.id) }}" target="_blank" class="btn btn-sm btn-outline-dark" title="Imprimir Ficha">
+                            <a href="{{ url_for('imprimir', id=aluno.id) }}" target="_blank" class="btn btn-sm btn-outline-dark" title="Imprimir Ficha" aria-label="Imprimir ficha do aluno {{ aluno.nome_completo }}">
                                 <i class="bi bi-printer"></i>
                             </a>
                         </td>
