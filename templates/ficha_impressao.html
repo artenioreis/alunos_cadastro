@@ -8,13 +8,13 @@
         @media print { 
             .no-print { display: none !important; } 
             body { background-color: white !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
-            .container { width: 100% !important; max-width: none !important; margin: 0 !important; padding: 0 !important; }
+            .container { width: 100% !important; max-width: none !important; margin: 0 auto !important; padding: 0 !important; }
         }
         
         body { font-family: 'Segoe UI', Arial, sans-serif; color: #000; line-height: 1.4; }
         .ficha-border { border: 2px solid #a689bd; padding: 20px; border-radius: 10px; }
         .ficha-header { border-bottom: 3px solid #a689bd; margin-bottom: 20px; padding-bottom: 10px; }
-        .logo-print { max-height: 70px; }
+        .logo-print { max-width: 250px; height: auto; }
         
         .section-title { 
             background-color: #f0f0f0 !important; 
@@ -30,7 +30,7 @@
         .value-field { border-bottom: 1px solid #ccc; font-size: 1rem; padding: 2px 0 5px 0; margin-bottom: 10px; min-height: 28px; }
         
         .aluno-foto-print { 
-            width: 140px; height: 160px; object-fit: cover; 
+            width: 180px; height: 180px; object-fit: cover;
             border: 2px solid #a689bd; border-radius: 5px; 
         }
 
