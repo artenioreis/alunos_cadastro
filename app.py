@@ -19,14 +19,19 @@ app.config.from_object(Config)
 Config.init_app(app)
 db.init_app(app)
 
+from sqlalchemy import event
+
 # Inicialização do Banco e Modo WAL (Essencial para funcionamento estável em rede)
 with app.app_context():
     db.create_all()
-    try:
-        with db.engine.connect() as conn:
-            conn.execute(db.text("PRAGMA journal_mode=WAL;"))
-    except Exception as e:
-        print(f"Aviso ao ativar modo WAL: {e}")
+
+    @event.listens_for(db.engine, "connect")
+    def set_sqlite_pragma(dbapi_connection, connection_record):
+        cursor = dbapi_connection.cursor()
+        cursor.execute("PRAGMA journal_mode=WAL;")
+        cursor.execute("PRAGMA synchronous=NORMAL;")
+        cursor.execute("PRAGMA busy_timeout=5000;")
+        cursor.close()
     
     # Cria o usuário inicial admin:1234 se o sistema estiver vazio
     if not Usuario.query.filter_by(username='admin').first():
