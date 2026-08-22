@@ -1,0 +1,6 @@
+venv/
+__pycache__/
+app.log
+cookies.txt
+*.db-shm
+*.db-wal
