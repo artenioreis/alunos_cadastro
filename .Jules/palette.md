@@ -1,0 +1,3 @@
+## 2024-05-18 - Localized ARIA Labels for Bootstrap Default Controls
+**Learning:** Default Bootstrap components, such as `.btn-close`, do not always possess inherent contextual semantic labels that persist correctly across localizations. When implementing these UI components in a non-English interface, screen readers might announce default English labels (e.g. "Close") or read non-descriptive elements.
+**Action:** Always explicitly override and translate ARIA attributes (e.g., `aria-label="Fechar"`) for standard icon-only buttons and alert dismissals to match the applications target locale (pt-BR).
