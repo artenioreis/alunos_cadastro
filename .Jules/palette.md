@@ -1,0 +1,3 @@
+## 2025-01-28 - Localized ARIA Labels for Bootstrap Components
+**Learning:** Default Bootstrap components (like `.btn-close`) often rely on browser-default accessibility labels or lack them entirely for non-English locales. In a localized application (like pt-BR), these default labels must be explicitly overridden to ensure screen readers announce them accurately (e.g., using `aria-label="Fechar"` instead of implicitly relying on English defaults).
+**Action:** When adding Bootstrap components or icon-only interactive elements in localized applications, always explicitly set the `aria-label` attribute using the application's primary language.
