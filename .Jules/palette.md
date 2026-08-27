@@ -1,0 +1,3 @@
+## 2024-06-25 - Fix Flash Message Close Buttons
+**Learning:** Bootstrap 5 requires specific `data-bs-*` attributes to function correctly. The `.btn-close` components on flash messages were broken because they were using `data-bs-alert` instead of `data-bs-dismiss`. Additionally, since the application is in Portuguese, screen readers required an explicit `aria-label="Fechar"` on the `.btn-close` components.
+**Action:** When working with Bootstrap 5 components, verify that the data attributes align with the version 5 specification (`data-bs-dismiss`, not Bootstrap 4's `data-dismiss` or incorrect variations). Ensure `aria-label`s are localized to the application's target language (Portuguese).
