@@ -1,0 +1,3 @@
+## 2024-05-20 - Bootstrap 5 localized ARIA labels and dismissal attributes
+**Learning:** In localized applications (pt-BR), default Bootstrap components like `.btn-close` need explicit `aria-label="Fechar"` attributes to override default English accessibility strings. Additionally, ensuring the correct `data-bs-dismiss="alert"` attribute is used instead of deprecated or incorrect attributes like `data-bs-alert` ensures interactive elements function smoothly.
+**Action:** Always verify `data-bs-*` attributes on Bootstrap 5 interactive components and explicitly localize ARIA labels on icon-only buttons like `.btn-close` or sidebar toggles.
