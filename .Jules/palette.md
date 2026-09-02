@@ -1,0 +1,3 @@
+## 2026-09-02 - [Bootstrap 5 Alert Dismiss Buttons & Localized ARIA Labels]
+**Learning:** Bootstrap 5 requires `data-bs-dismiss` (instead of Bootstrap 4's `data-dismiss` or incorrect custom attributes like `data-bs-alert`) to successfully dismiss alerts. Additionally, in localized applications (like pt-BR), default Bootstrap components like `.btn-close` must explicitly have localized ARIA labels like `aria-label="Fechar"` instead of defaulting to English "Close" to ensure accurate screen reader functionality.
+**Action:** Always verify Bootstrap interactive attributes use the `bs-` prefix correctly and ensure icon-only buttons (`.btn-close`, sidebar toggles) have localized `aria-label` attributes that match the application's language.
