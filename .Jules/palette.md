@@ -1,0 +1,3 @@
+## 2024-03-20 - [Bootstrap 5 Close Button Localization]
+**Learning:** Bootstrap 5 `.btn-close` components require specific attention in localized applications. They lack default `aria-label`s which need to be explicitly added and translated (e.g., `aria-label="Fechar"` for pt-BR) for screen reader accessibility. Additionally, the dismissal attribute must be exactly `data-bs-dismiss="alert"` (not `data-bs-alert` or the older Bootstrap 4 `data-dismiss`).
+**Action:** Always verify `aria-label` translations and specific `data-bs-*` attributes when implementing or migrating Bootstrap interactive components in localized applications.
