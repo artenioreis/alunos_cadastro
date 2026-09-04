@@ -1,0 +1,3 @@
+## 2024-05-18 - Bootstrap 5 Dismiss Buttons and Localized ARIA Labels
+**Learning:** When using Bootstrap 5 components in this localized application (pt-BR), default ARIA labels (e.g., 'Close' for `.btn-close`) must be explicitly overridden and translated to Portuguese (`aria-label="Fechar"`) to ensure accurate screen reader accessibility. Additionally, Bootstrap 5 requires `data-bs-dismiss` instead of incorrect or legacy attributes (like `data-bs-alert`).
+**Action:** Always verify `data-bs-*` attributes on interactive Bootstrap 5 components and explicitly provide localized Portuguese ARIA labels for icon-only buttons or default dismiss buttons.
