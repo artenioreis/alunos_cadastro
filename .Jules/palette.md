@@ -1,0 +1,3 @@
+## 2024-05-18 - Bootstrap 5 Alerts and ARIA Localization
+**Learning:** In a localized application (like pt-BR), Bootstrap components with default English ARIA labels (e.g., `btn-close`) need to be explicitly overridden with translated labels (e.g., `aria-label="Fechar"`) for screen reader accessibility. Additionally, Bootstrap 5 uses `data-bs-*` attributes for JavaScript interactions, so it's critical to use `data-bs-dismiss="alert"` instead of incorrect variations like `data-bs-alert`.
+**Action:** When implementing Bootstrap 5 interactive components in localized apps, always verify and translate standard ARIA labels, and double-check the exact `data-bs-*` attributes required by the framework's documentation.
