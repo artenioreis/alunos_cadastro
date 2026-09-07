@@ -1,0 +1,6 @@
+venv/
+__pycache__/
+*.db-shm
+*.db-wal
+server.log
+test_ui.py
